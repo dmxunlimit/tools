@@ -1,0 +1,6 @@
+loadTestSuite/jmeter.log
+loadTestSuite/results/*
+loadTestSuite/tools/*
+loadTestSuite/stop.sh
+loadTestSuite/nohup.out
+loadTestSuite/jmxScripts/*

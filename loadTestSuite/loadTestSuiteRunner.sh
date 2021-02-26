@@ -3,17 +3,20 @@
 CreateStopScript() {
 sudo echo '#!/bin/sh
 pname=loadtest
-process=$(ps aux | grep -v grep | grep $pname | awk "{print $2}")
+process=$(ps aux | grep -v grep | grep $pname | awk '\''{print $2}'\'')
+jprocess=$(ps aux | grep -v grep | grep jmeter | awk '\''{print $2}'\'')
 
 if [ -z "$process" ]; then
   printf "No running process for $pname \n"
 else
   echo $(ps aux | grep -v grep | grep $pname)
-  printf '\n'
+  printf '\''\n'\''
   read -p "Do you wish to kill the service y/n :" killme
   if [ "$killme" = "y" ]; then
-    kill $(ps aux | grep -v grep | grep $pname | awk "{print $2}")
-    kill $(ps aux | grep -v grep | grep jmeter | awk "{print $2}")
+    sudo kill -9 $process
+    if [ -z "$jprocess" ]; then
+    sudo kill -9 $jprocess
+    fi
     sleep 3
 
     printf "\nVerify the running process for $pname \n"
@@ -23,7 +26,7 @@ else
       printf "Yey, Successfully stop the $pname ! \n"
     else
       echo $(ps aux | grep -v grep | grep $pname)
-      printf '\n'
+      printf '\''\n'\''
     fi
   fi
 fi' >stop.sh
@@ -31,7 +34,7 @@ fi' >stop.sh
 }
 
 CreateLoadTestScript() {
-sudo echo '#!/bin/sh
+sudo echo '#!/bin/bash
 newFiles=1
 
 while [ $newFiles == 1 ]; do
@@ -137,7 +140,7 @@ if [ -z "$process" ]; then
 
   sleep 1
 
-  nohup sh $CURRENTDIR/tools/loadtest.sh $CURRENTDIR $1 &
+  nohup bash $CURRENTDIR/tools/loadtest.sh $CURRENTDIR $1 &
   echo "\nBackgroud job created ./loadtest.sh !" && sleep 1 && tail -n 0 -f nohup.out
 
 else
