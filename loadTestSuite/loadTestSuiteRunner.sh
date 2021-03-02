@@ -1,14 +1,11 @@
 #!/bin/sh
 
-CreateStopScript() {
- curl https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/stop.sh -o stop.sh -s
- sudo chmod 755 stop.sh
-}
+echo "Loading the latest script updates .. \n"
+curl --progress-bar https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/stop.sh -o stop.sh
+sudo chmod 755 stop.sh
 
-CreateLoadTestScript() {
- curl https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/loadtest.sh -o $CURRENTDIR/tools/loadtest.sh -s
- sudo chmod 755 $CURRENTDIR/tools/loadtest.sh
-}
+curl --progress-bar https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/loadtest.sh -o $CURRENTDIR/tools/loadtest.sh
+sudo chmod 755 $CURRENTDIR/tools/loadtest.sh
 
 pname=loadtest
 process=$(ps aux | grep -v grep | grep $pname | awk '{print $2}')
@@ -30,7 +27,8 @@ if [ -z "$process" ]; then
   if [ ! -d "$CURRENTDIR/tools/jmeter" ]; then
 
     if [ ! -f $CURRENTDIR/tools/*jmeter* ]; then
-      wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.4.1.tgz -P $CURRENTDIR/tools/
+      echo "Downloading Jmeter ... \n"
+      curl --progress-bar https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.4.1.tgz -o $CURRENTDIR/tools/
     fi
 
     mkdir -p $CURRENTDIR/tools/temp
@@ -41,7 +39,8 @@ if [ -z "$process" ]; then
   if [ ! -n "$JAVA_HOME" ]; then
     if [ ! -d "$CURRENTDIR/tools/java" ]; then
       if [ ! -f $CURRENTDIR/tools/*jre* ]; then
-        wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -P $CURRENTDIR/tools/
+        echo "Downloading JAVA ... \n"
+        curl --progress-bar https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -o $CURRENTDIR/tools/
       fi
 
       mkdir -p $CURRENTDIR/tools/temp
@@ -57,16 +56,12 @@ if [ -z "$process" ]; then
 
   rm -rf $CURRENTDIR/tools/temp
 
-  CreateLoadTestScript
-  CreateStopScript
-
   sleep 1
 
   nohup bash $CURRENTDIR/tools/loadtest.sh $CURRENTDIR $1 &
   echo "\nBackgroud job created ./loadtest.sh !" && sleep 1 && tail -n 0 -f nohup.out
 
 else
-  CreateStopScript
   printf "Already running process found for $pname \n"
   sudo ./stop.sh
 fi
