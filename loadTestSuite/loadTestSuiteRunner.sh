@@ -4,10 +4,10 @@ CURRENTDIR=$(pwd)
 mkdir -p $CURRENTDIR/tools/
 
 echo "Loading the latest script updates .. \n"
-curl --progress-bar https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/stop.sh -o stop.sh
+curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/stop.sh -o stop.sh
 sudo chmod 755 stop.sh
 
-curl --progress-bar https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/loadtest.sh -o $CURRENTDIR/tools/loadtest.sh
+curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/loadtest.sh -o $CURRENTDIR/tools/loadtest.sh
 sudo chmod 755 $CURRENTDIR/tools/loadtest.sh
 
 pname=loadtest
