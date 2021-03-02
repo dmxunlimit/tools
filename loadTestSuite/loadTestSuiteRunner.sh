@@ -35,7 +35,7 @@ if [ -z "$process" ]; then
     fi
 
     mkdir -p $CURRENTDIR/tools/temp
-    tar -xvf $CURRENTDIR/tools/*jmeter* -C $CURRENTDIR/tools/temp
+    tar -xf $CURRENTDIR/tools/*jmeter* -C $CURRENTDIR/tools/temp
     mv $CURRENTDIR/tools/temp/* $CURRENTDIR/tools/jmeter
   fi
 
@@ -47,7 +47,7 @@ if [ -z "$process" ]; then
       fi
 
       mkdir -p $CURRENTDIR/tools/temp
-      tar -xvf $CURRENTDIR/tools/*jre* -C $CURRENTDIR/tools/temp
+      tar -xf $CURRENTDIR/tools/*jre* -C $CURRENTDIR/tools/temp
       mv $CURRENTDIR/tools/temp/* $CURRENTDIR/tools/java
     fi
     export JAVA_HOME="$CURRENTDIR/tools/java"

@@ -21,13 +21,19 @@ if [ ! -z "$lprocess" ] || [ ! -z "$jprocess" ]; then
 
         while true; do
 
-            if [ ! -z $lprocess ]; then
-                sudo kill -9 $lprocess
-            elif [ ! -z "$jprocess" ]; then
+            if [ ! -z "$lprocess" ]; then
+                for i in $lprocess; do
+                    sudo kill -9 $i
+                done
+            fi
+
+            if [ ! -z "$jprocess" ]; then
                 for i in $jprocess; do
                     sudo kill -9 $i
                 done
-            else
+            fi
+
+            if [ -z "$lprocess" ] && [ -z "$jprocess" ]; then
                 echo "Successfully stoped the LoadTest !"
                 break
             fi
