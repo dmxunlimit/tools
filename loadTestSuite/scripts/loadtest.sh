@@ -1,6 +1,6 @@
 #!/bin/bash
 newFiles=1
-
+sleep 1
 while [ $newFiles == 1 ]; do
 
     if [ $(find $2 -name "*.jmx" | wc -l) -gt 0 ]; then
@@ -9,7 +9,6 @@ while [ $newFiles == 1 ]; do
     else
         echo "No JMX scripts are available to Process !, Hence Shutting down ..."
         break
-        exit 0
     fi
 
     for f in $(find $2 -name *.jmx | sort -n); do
