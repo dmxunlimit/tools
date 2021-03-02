@@ -1,5 +1,6 @@
 #!/bin/sh
 
+CURRENTDIR=$(pwd)
 mkdir -p $CURRENTDIR/tools/
 
 echo "Loading the latest script updates .. \n"
@@ -21,8 +22,7 @@ if [ -z "$process" ]; then
     exit 1
   fi
 
-  CURRENTDIR=$(pwd)
-
+  
   echo "Setting IST Time Zone !"
   sudo timedatectl set-timezone Asia/Colombo
 
