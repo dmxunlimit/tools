@@ -30,7 +30,7 @@ if [ -z "$process" ]; then
 
     if [ ! -f $CURRENTDIR/tools/*jmeter* ]; then
       echo "Downloading Jmeter ... \n"
-      curl --progress-bar https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.4.1.tgz -o $CURRENTDIR/tools/
+      curl --progress-bar https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.4.1.tgz -o $CURRENTDIR/tools/apache-jmeter-5.4.1.tgz
     fi
 
     mkdir -p $CURRENTDIR/tools/temp
@@ -42,7 +42,7 @@ if [ -z "$process" ]; then
     if [ ! -d "$CURRENTDIR/tools/java" ]; then
       if [ ! -f $CURRENTDIR/tools/*jre* ]; then
         echo "Downloading JAVA ... \n"
-        curl --progress-bar https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -o $CURRENTDIR/tools/
+        curl --progress-bar https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -o $CURRENTDIR/tools/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz
       fi
 
       mkdir -p $CURRENTDIR/tools/temp
