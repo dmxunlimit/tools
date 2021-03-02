@@ -9,6 +9,7 @@ while [ $newFiles == 1 ]; do
     else
         echo "No JMX scripts are available to Process !, Hence Shutting down ..."
         break
+        exit 0
     fi
 
     for f in $(find $2 -name *.jmx | sort -n); do
