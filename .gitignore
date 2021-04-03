@@ -3,3 +3,7 @@ loadTestSuite/results/*
 loadTestSuite/tools/*
 loadTestSuite/nohup.out
 loadTestSuite/jmxScripts/*
+git-tools/git-repos
+git-tools/git-repos_bkp
+git-tools/tmp
+git-tools/template.tmp
