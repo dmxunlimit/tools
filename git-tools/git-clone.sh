@@ -22,6 +22,14 @@ elif [ -z $repoFilter ]; then
 fi
 
 read -sp 'Enter the GIT Token: ' token
+printf "\n"
+read -p 'Force clone by removing existing repos [no]: ' force
+if [ "$force" == "yes" ]; then
+    printf "\nWRAN : Force cloning , exisitng repos will be removed. !!\n"
+    force=true
+else
+    force=false
+fi
 
 if [ ! -z "$token" ]; then
     # With Authentication
@@ -39,12 +47,19 @@ finalize() {
 
 for i in {1..1000}; do
     request=$base_url'&page='$i
-    printf "\n"$request
+    printf "\n$request\n"
     curl -s -H "Accept: application/vnd.github.v3+json" $request | grep 'clone_url' | grep -o 'https://github.com[^"]*' >$tmpFile
 
     if [ -s $tmpFile ]; then
         while read line || [ -n "$line" ]; do
             if [[ "$line" == *"github"* ]]; then
+
+                path=$(echo "$line" | grep -o 'extensions.*' | cut -d "/" -f2 | cut -d "." -f1)
+
+                if [ -d "$path" ] && [ "$force" = true ]; then
+                    printf "\nRemoveing the exisitng repo : $path \n"
+                    rm -rf $path
+                fi
 
                 if [ "$repoFilter" == "*" ]; then
                     printf "\n"
