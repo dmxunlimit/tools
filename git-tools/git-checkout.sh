@@ -87,4 +87,4 @@ for i in $(find . -mindepth 1 -maxdepth 1 -type d); do
         cd $CUR_DIR
     fi
 done
-printf "\nComplete!\n"
+printf "\nCompleted!\n"
