@@ -4,7 +4,7 @@
 FILE=./properties.conf
 
 if [ ! -f "$FILE" ]; then
-  curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tooles/properties.conf -o properties.conf
+  curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/properties.conf -o properties.conf
 fi
 
 source ./properties.conf
