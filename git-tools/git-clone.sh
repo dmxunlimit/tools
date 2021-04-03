@@ -35,7 +35,7 @@ fi
 for i in {1..100}; do
     request=$base_url'&page='$i
     printf "\n"$request
-    curl -s -H "Accept: application/vnd.github.v3+json" $request | jq -r '.[].clone_url' >$tmpFile
+    curl -s -H "Accept: application/vnd.github.v3+json" $request | grep 'clone_url' | grep -o 'https://github.com[^"]*' >$tmpFile
 
     if [ -s $tmpFile ]; then
         while read line || [ -n "$line" ]; do
@@ -57,7 +57,7 @@ for i in {1..100}; do
     else
         exit 0
     fi
-    sleep 2
+    sleep 5
 done
 
 rm -rf ./tmp
