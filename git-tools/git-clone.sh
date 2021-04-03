@@ -16,7 +16,7 @@ fi
 
 read -p 'Enter the repo filter [identity]: ' repoFilter
 if [ "$repoFilter" == "*" ]; then
-    echo "WARN : Cloning all the repos of echo the ORG : $org"
+    echo "WARN : Cloning all the repos of the ORG : $org"
 elif [ -z $repoFilter ]; then
     repoFilter="identity"
 fi
