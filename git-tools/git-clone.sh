@@ -6,12 +6,12 @@ if test -f "$repoFile"; then
     rm -rf $repoFile
 fi
 
-org="wso2-extensions"
+org="wso2"
 repoFilter="identity"
 
-read -p 'Enter the ORG name to clone [wso2-extensions]: ' org
+read -p 'Enter the ORG name to clone [wso2]: ' org
 if [ -z $org ]; then
-    org="wso2-extensions"
+    org="wso2"
 fi
 
 read -p 'Enter the repo filter [identity]: ' repoFilter
