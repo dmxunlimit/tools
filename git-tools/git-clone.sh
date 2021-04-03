@@ -32,6 +32,11 @@ else
     base_url="https://api.github.com/orgs/$org/repos?per_page=100"
 fi
 
+finalize() {
+    rm -rf $tmpFile
+    printf "\nCompleted!\n"
+}
+
 for i in {1..1000}; do
     request=$base_url'&page='$i
     printf "\n"$request
@@ -51,10 +56,12 @@ for i in {1..1000}; do
                     git clone $line
                 fi
             else
+                finalize
                 exit 0
             fi
         done <$tmpFile
     else
+        finalize
         exit 0
     fi
     sleep 5
