@@ -32,7 +32,7 @@ else
     base_url="https://api.github.com/orgs/$org/repos?per_page=100"
 fi
 
-for i in {1..100}; do
+for i in {1..1000}; do
     request=$base_url'&page='$i
     printf "\n"$request
     curl -s -H "Accept: application/vnd.github.v3+json" $request | grep 'clone_url' | grep -o 'https://github.com[^"]*' >$tmpFile
