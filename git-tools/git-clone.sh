@@ -54,7 +54,7 @@ for i in {1..1000}; do
         while read line || [ -n "$line" ]; do
             if [[ "$line" == *"github"* ]]; then
 
-                path=$(echo "$line" | grep -o 'extensions.*' | cut -d "/" -f2 | cut -d "." -f1)
+                path=$(echo "$line" | grep -o $org'.*' | cut -d "/" -f2 | cut -d "." -f1)
 
                 if [ -d "$path" ] && [ "$force" = true ]; then
                     printf "\nRemoveing the exisitng repo : $path \n"

@@ -1,5 +1,6 @@
+*
 */*
-git-repos
-tmp
-template.tmp
-git-repos_bkp
+!git-checkout
+!.gitignore
+!git-clone.sh
+!properties.conf
