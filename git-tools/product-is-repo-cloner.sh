@@ -6,7 +6,7 @@ echo >repos-not-found
 FILE=./product-is-versions
 
 if [ ! -f "$FILE" ]; then
-  curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/product-is-versions -o repo-versions
+  curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/product-is-versions -o product-is-versions
 fi
 
 
