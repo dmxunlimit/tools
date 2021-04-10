@@ -3,4 +3,7 @@
 !git-checkout
 !.gitignore
 !git-clone.sh
+!product-is-repo-cloner.sh
 !properties.conf
+!product-versions
+!repo-versions

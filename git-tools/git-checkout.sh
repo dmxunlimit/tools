@@ -1,20 +1,20 @@
 #!/bin/bash
 # run this from your workspace, which contains all your Git repos
 
-FILE=./properties.conf
+FILE=./repo-versions
 
 if [ ! -f "$FILE" ]; then
-  curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/properties.conf -o properties.conf
+  curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/repo-versions -o repo-versions
 fi
 
-source ./properties.conf
+source ./repo-versions
 wrk_dir=$(pwd)
 
-FILE=./templates
+# FILE=./templates
 
-if [ -f "$FILE" ]; then
-  rm -rf $FILE
-fi
+# if [ -f "$FILE" ]; then
+#   rm -rf $FILE
+# fi
 
 
 if [ -z $1 ]; then
@@ -25,7 +25,7 @@ fi
 
 if [ -z $2 ]; then
     read -p 'Force checkout [no]: ' force
-    if [ "$force" == "yes" ]; then
+    if [ "$force" == "yes" ] || [ "$force" == "y" ]; then
         printf "\nWRAN : Force checkout , local changes will destroy !!\n"
         force="-f"
     else
@@ -38,6 +38,7 @@ fi
 getBranch() {
     dirname=$1
     dirname="${dirname:2}"
+    branch=''
     branch_version=$2
 
     if [ "$branch_version" != "master" ] && [ ! -z $branch_version ]; then
@@ -48,20 +49,36 @@ getBranch() {
         key=$dirname"_"$version
         value=$(echo "${!key}")
 
+        echo "#### KEY : $key"
+        
         if [ ! -z "$value" ]; then
-            echo $key"='$value'" >>$wrk_dir/templates
             branch=$value
-        else
-            echo $key"='master'" >>$wrk_dir/templates
-            branch='master'
+            echo "#### BRANCH : $branch"
+            support_brach=$(git branch -r | grep $branch | grep 'support' | grep -Ev 'release|security|full|revert' | head -1)
+            # echo "#### support_brach : $support_brach"
+            if [ -z "$support_brach" ]; then
+            branch=$(git branch -r | grep $branch | grep -Ev 'HEAD|release|security|full|revert' | head -1)
+            echo "#### NO support_brach : $branch"
+            else
+            branch=$support_brach
+            echo "#### support_brach : $support_brach"
+            fi
+
+            branch=$(echo $branch | sed -e 's/origin\///g')
+            echo "#### GIT BRANCH : $branch"
         fi
 
+        if [ -z "$branch" ]; then
+            branch='master'
+        fi
+        # echo $key"='$branch'" >>$wrk_dir/templates
     else
 
         branch='master'
     fi
 
-    echo "Checking out branch "$branch" for" $dirname
+
+    echo "#### Checking out branch "$branch" for" $dirname
 
 }
 
