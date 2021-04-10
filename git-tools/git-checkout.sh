@@ -48,24 +48,18 @@ getBranch() {
         version=$(echo $version | sed 's/\-/\_/g')
         key=$dirname"_"$version
         value=$(echo "${!key}")
-
-        echo "#### KEY : $key"
         
         if [ ! -z "$value" ]; then
             branch=$value
-            echo "#### BRANCH : $branch"
             support_brach=$(git branch -r | grep $branch | grep 'support' | grep -Ev 'release|security|full|revert' | head -1)
             # echo "#### support_brach : $support_brach"
             if [ -z "$support_brach" ]; then
             branch=$(git branch -r | grep $branch | grep -Ev 'HEAD|release|security|full|revert' | head -1)
-            echo "#### NO support_brach : $branch"
             else
             branch=$support_brach
-            echo "#### support_brach : $support_brach"
             fi
 
             branch=$(echo $branch | sed -e 's/origin\///g')
-            echo "#### GIT BRANCH : $branch"
         fi
 
         if [ -z "$branch" ]; then
@@ -78,7 +72,7 @@ getBranch() {
     fi
 
 
-    echo "#### Checking out branch "$branch" for" $dirname
+    echo "# Checking out branch "$branch" for" $dirname
 
 }
 
