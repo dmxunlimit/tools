@@ -2,6 +2,7 @@ repopath='/Users/supunpe/Documents/wso2/git/wso2-support/product-is/pom.xml'
 CUR_DIR=$(pwd)
 echo >repo-versions
 echo >repos-not-found
+git config --global credential.helper cache
 
 FILE=./product-is-versions
 
