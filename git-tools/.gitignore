@@ -2,7 +2,7 @@
 */*
 !git-checkout
 !.gitignore
-!git-clone.sh
+!git-clone-all.sh
 !product-is-repo-cloner.sh
 !properties.conf
 !product-is-versions

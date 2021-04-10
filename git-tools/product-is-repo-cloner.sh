@@ -26,7 +26,7 @@ while read line || [ -n "$line" ]; do
     getRepoVersions() {
 
         line=$(echo $1 | sed -e 's/<\/.*/'\''/g' | sed -e 's/<//g')
-        key=$(echo $line | cut -d ">" -f1 | sed 's/\./\_/g' | sed 's/\-/\_/g' | sed 's/\version//g' | sed 's/.$//')
+        key=$(echo $line | cut -d ">" -f1 | sed 's/\./\_/g' | sed 's/\-/\_/g' | sed -e 's/version//g' | sed 's/.$//')
         gitrepo=$(echo $key | sed 's/\_/\-/g')
         value=$(echo $line | cut -d ">" -f2)
     }
