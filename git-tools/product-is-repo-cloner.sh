@@ -1,7 +1,7 @@
 repopath='/Users/supunpe/Documents/wso2/git/wso2-support/product-is/pom.xml'
 CUR_DIR=$(pwd)
 echo >repo-versions
-echo >repos-not-found
+# echo >repos-not-found
 git config --global credential.helper cache
 
 FILE=./product-is-versions
@@ -49,7 +49,11 @@ while read line || [ -n "$line" ]; do
             final_key=$key"_"$prodVersion"='$value"
             echo $final_key >>repo-versions
 
-            if [ ! -d "$gitrepo" ]; then
+            
+            invalidRepo=$(grep "$gitrepo" repos-not-found)
+           
+
+            if [ ! -d "$gitrepo" ] && [ -z "$invalidRepo" ]; then
 
                 git clone "https://github.com/wso2-support/$gitrepo.git"
 
