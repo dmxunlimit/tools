@@ -5,5 +5,5 @@
 !git-clone.sh
 !product-is-repo-cloner.sh
 !properties.conf
-!product-versions
+!product-is-versions
 !repo-versions
