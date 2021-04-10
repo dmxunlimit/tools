@@ -13,7 +13,7 @@ fi
 
 while read line || [ -n "$line" ]; do
     echo
-    prodVersion=$(echo $line | sed -e 's/\support-/\wso2is_/g' | sed 's/\./\_/g')
+    prodVersion=$(echo $line | sed -e 's/support-/\wso2is_/g' | sed 's/\./\_/g')
     echo "### "$prodVersion" ###"
     echo "## $prodVersion" >>repo-versions
 
