@@ -10,6 +10,7 @@ if [ ! -f "$FILE" ]; then
   curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/product-is-versions -o product-is-versions
 fi
 
+git clone "https://github.com/wso2-support/product-is"
 
 while read line || [ -n "$line" ]; do
     echo
@@ -17,7 +18,6 @@ while read line || [ -n "$line" ]; do
     echo "### "$prodVersion" ###"
     echo "## $prodVersion" >>repo-versions
 
-    git clone "https://github.com/wso2-support/product-is"
     cd product-is
     git checkout $line
     git pull
