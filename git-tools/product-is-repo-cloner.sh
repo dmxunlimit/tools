@@ -1,11 +1,13 @@
 repopath='/Users/supunpe/Documents/wso2/git/wso2-support/product-is/pom.xml'
 CUR_DIR=$(pwd)
 echo >repo-versions
-echo >repos-notfound
+echo >repos-not-found
 
 while read line || [ -n "$line" ]; do
-    echo $line
-    echo "## $line" >>repo-versions
+    echo
+    prodVersion=$(echo $line | sed -e 's/\support-/\wso2is_/g' | sed 's/\./\_/g')
+    echo "### "$prodVersion" ###"
+    echo "## $prodVersion" >>repo-versions
 
     git clone "https://github.com/wso2-support/product-is"
     cd product-is
@@ -36,7 +38,7 @@ while read line || [ -n "$line" ]; do
             if [[ "$value" == *"jaggery.extensions.version"* ]]; then
                 value=$jag_version
             fi
-            final_key="$key='$value"
+            final_key=$key"_"$prodVersion"='$value"
             echo $final_key >>repo-versions
 
             if [ ! -d "$gitrepo" ]; then
@@ -60,6 +62,6 @@ while read line || [ -n "$line" ]; do
 
     done <./temp-versions
     echo "" >>repo-versions
-done <./product-versions
+done <./product-is-versions
 
 rm -rf temp-versions
