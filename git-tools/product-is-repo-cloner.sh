@@ -3,6 +3,13 @@ CUR_DIR=$(pwd)
 echo >repo-versions
 echo >repos-not-found
 
+FILE=./product-is-versions
+
+if [ ! -f "$FILE" ]; then
+  curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/product-is-versions -o repo-versions
+fi
+
+
 while read line || [ -n "$line" ]; do
     echo
     prodVersion=$(echo $line | sed -e 's/\support-/\wso2is_/g' | sed 's/\./\_/g')
