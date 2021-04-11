@@ -9,7 +9,7 @@ chmod 755 git-clone-product-is.sh\
 ##### usage :
 >wget https://git.io/JOkB9 -O git-checkout.sh\
 chmod 755 git-checkout.sh\
-./git-checkout.sh <product_version> <force>
+./git-checkout.sh <product_version> <force>\
 ex ./git-checkout.sh 5.10.0 y
 
 #### Single script to all repos for a org  https://git.io/JOkEu
