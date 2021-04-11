@@ -68,6 +68,14 @@ cloneRepo() {
 
 }
 
+getRepoVersions() {
+
+    line=$(echo $1 | sed -e 's/<\/.*/'\''/g' | sed -e 's/<//g')
+    key=$(echo $line | cut -d ">" -f1 | sed 's/\./\-/g' | sed -e 's/version//g' | sed 's/.$//')
+    gitrepo=$key
+    value=$(echo $line | cut -d ">" -f2)
+}
+
 while read line || [ -n "$line" ]; do
     echo
     prodVersion=$(echo $line | sed -e 's/support-/\wso2is-/g' | sed 's/\./\-/g')
@@ -80,14 +88,6 @@ while read line || [ -n "$line" ]; do
     git pull
     cd $CUR_DIR
     echo
-
-    getRepoVersions() {
-
-        line=$(echo $1 | sed -e 's/<\/.*/'\''/g' | sed -e 's/<//g')
-        key=$(echo $line | cut -d ">" -f1 | sed 's/\./\-/g' | sed -e 's/version//g' | sed 's/.$//')
-        gitrepo=$key
-        value=$(echo $line | cut -d ">" -f2)
-    }
 
     grep ".version>" product-is/pom.xml | grep -v "<version>" >temp-versions
     jag_version=$(grep "jaggery.extensions.version>" temp-versions)
