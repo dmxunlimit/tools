@@ -3,28 +3,29 @@
 # usage : ./git-checkout <product_version> <force>
 # usage : ./git-checkout 5.2.0 y
 
-repopath='/Users/supunpe/Documents/wso2/git/wso2-support/product-is/pom.xml'
 CUR_DIR=$(pwd)
-echo >repo-versions
+
 git config --global credential.helper cache
 
 wrk_dir=$(pwd)
+mkdir -p $wrk_dir'/artefacts'
 
-PRODCT_VER_FILE=$wrk_dir'/product-is-versions'
-INVALID_REPOS_FILE=$wrk_dir'/invalid-repos'
-
-MAPPED_REPOS_FILE=$wrk_dir'/repo-mapping'
+PRODCT_VER_FILE=$wrk_dir'/artefacts/product-is-versions'
+INVALID_REPOS_FILE=$wrk_dir'/artefacts/invalid-repos'
+MAPPED_REPOS_FILE=$wrk_dir'/artefacts/repo-mapping'
+REPO_VERSIONS_FILE=$wrk_dir'/artefacts/repo-versions'
+echo >$REPO_VERSIONS_FILE
 
 if [ ! -f "$MAPPED_REPOS_FILE" ]; then
-curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/repo-mapping -o repo-mapping
+curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/repo-mapping -o $MAPPED_REPOS_FILE
 fi
 
 if [ ! -f "$PRODCT_VER_FILE" ]; then
-    curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/product-is-versions -o product-is-versions
+    curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/product-is-versions -o $PRODCT_VER_FILE
 fi
 
 if [ ! -f "$INVALID_REPOS_FILE" ]; then
-    curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/invalid-repos -o invalid-repos
+    curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/invalid-repos -o $INVALID_REPOS_FILE
 fi
 
 DIR_PROD_IS=$wrk_dir'/product-is'
@@ -37,7 +38,7 @@ while read line || [ -n "$line" ]; do
     prodVersion=$(echo $line | sed -e 's/support-/\wso2is-/g' | sed 's/\./\-/g')
     display_name=$(echo $line | sed -e 's/support-/\WSO2IS-/g')
     echo "### "$display_name" ###"
-    echo "## $display_name" >>repo-versions
+    echo "## $display_name" >>$REPO_VERSIONS_FILE
 
     cd product-is
     git checkout $line
@@ -68,7 +69,7 @@ while read line || [ -n "$line" ]; do
                 value=$jag_version
             fi
             final_key=$key"-"$prodVersion"='$value"
-            echo $final_key >>repo-versions
+            echo $final_key >>$REPO_VERSIONS_FILE
 
             if [ ! -d "$gitrepo" ]; then
                 mappedRepo=$(grep "^$gitrepo=" $MAPPED_REPOS_FILE)
@@ -103,7 +104,7 @@ while read line || [ -n "$line" ]; do
         fi
 
     done <./temp-versions
-    echo "" >>repo-versions
+    echo "" >>$REPO_VERSIONS_FILE
 done <$PRODCT_VER_FILE
 
 rm -rf ./temp-versions

@@ -1,7 +1,11 @@
 #!/bin/bash
 
-repoFile=./git-repos
-tmpFile=./tmp
+wrk_dir=$(pwd)
+mkdir -p $wrk_dir'/artefacts'
+
+repoFile=$wrk_dir'/artefacts/git-repos'
+tmpFile=$wrk_dir'/artefacts/tmp'
+
 if test -f "$repoFile"; then
     rm -rf $repoFile
 fi
@@ -82,4 +86,4 @@ for i in {1..1000}; do
     sleep 5
 done
 
-rm -rf ./tmp
+rm -rf $tmpFile
