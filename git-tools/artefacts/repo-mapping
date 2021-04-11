@@ -1,4 +1,4 @@
-#product-is-key=actual-repo#<org>
+##<product-is-key>=<actual-repo-name>#<git-org>
 identity-app-authz-xacml=identity-application-authz-xacml#wso2-extensions
 provisioning-connector-google=identity-outbound-provisioning-google#wso2-extensions
 provisioning-connector-salesforce=identity-outbound-provisioning-salesforce#wso2-extensions
