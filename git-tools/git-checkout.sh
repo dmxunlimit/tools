@@ -38,12 +38,12 @@ gitCheckout() {
     printf "\n"
     git remote set-url origin "$NEW_REMOTE"
     if [ -z $tag ]; then
-    echo "# Checking out branch "$branch" for" $dirname
-    git checkout $branch $force
-    git pull
+        echo "# Checking out branch "$branch" for" $dirname
+        git checkout $branch $force
+        git pull
     else
-    echo "# Checking out tag "$branch" for" $dirname
-    git checkout $branch $force -q
+        echo "# Checking out tag "$branch" for" $dirname
+        git checkout $branch $force -q
     fi
 }
 
@@ -81,6 +81,9 @@ getBranch() {
                         echo "No branch found ,hence checking tag :"$branch
                         tag=$(git tag | grep $branch | head -1)
                         echo "TAG Version :"$tag
+                        if [ -z "$tag" ]; then
+                            echo $key >>$wrk_dir'/artefacts/missing-repos'
+                        fi
                         branch=$tag
                     else
                         branch=$gen_branch
@@ -112,7 +115,7 @@ echo "$branch"
 CUR_DIR=$(pwd)
 printf "Updating remotes for all repositories...\n"
 for i in $(find . -mindepth 1 -maxdepth 1 -type d); do
-    if [ $i != "./.idea" ] &&  [ $i != "./artefacts" ]; then
+    if [ $i != "./.idea" ] && [ $i != "./artefacts" ]; then
         cd "$i"
         THIS_REMOTES="$(git remote -v)"
         arr=($THIS_REMOTES)
