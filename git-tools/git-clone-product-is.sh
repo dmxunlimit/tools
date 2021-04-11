@@ -41,7 +41,7 @@ while read line || [ -n "$line" ]; do
     echo "## $display_name" >>$REPO_VERSIONS_FILE
 
     cd product-is
-    git checkout $line
+    git checkout $line -f 
     git pull
     cd $CUR_DIR
     echo
