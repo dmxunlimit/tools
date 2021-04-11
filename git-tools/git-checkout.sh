@@ -112,7 +112,6 @@ getBranch() {
 
 echo "$branch"
 
-CUR_DIR=$(pwd)
 printf "Updating remotes for all repositories...\n"
 for i in $(find . -mindepth 1 -maxdepth 1 -type d); do
     if [ $i != "./.idea" ] && [ $i != "./artefacts" ]; then
@@ -122,7 +121,7 @@ for i in $(find . -mindepth 1 -maxdepth 1 -type d); do
         OLD_REMOTE="${arr[1]}"
         NEW_REMOTE="${OLD_REMOTE/git.old.net/git.new.org}"
         getBranch $i $branch_version
-        cd $CUR_DIR
+        cd $wrk_dir
     fi
 done
 
