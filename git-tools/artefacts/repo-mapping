@@ -1,4 +1,8 @@
-##<product-is-key>=<actual-repo-name>#<git-org>
+#usage
+##<product-is-version-key>=<actual-repo-name>#<git-org>
+#or add custom repos
+##custom1=aws-esb#wso2-support
+
 identity-app-authz-xacml=identity-application-authz-xacml#wso2-extensions
 provisioning-connector-google=identity-outbound-provisioning-google#wso2-extensions
 provisioning-connector-salesforce=identity-outbound-provisioning-salesforce#wso2-extensions
@@ -53,3 +57,4 @@ identity-user-workflow=identity-user-workflow#wso2-extensions
 identity-notification-email=identity-notification-email#wso2-extensions
 identity-local-auth-api=identity-local-auth-api#wso2-extensions
 jaggery-extensions=jaggery-extensions#wso2
+# custom1=aws-esb#wso2-support

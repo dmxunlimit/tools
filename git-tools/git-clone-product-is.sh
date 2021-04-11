@@ -33,6 +33,41 @@ if [ ! -d "$DIR_PROD_IS" ]; then
     git clone "https://github.com/wso2-support/product-is"
 fi
 
+cloneRepo() {
+
+    if [ ! -d "$gitrepo" ]; then
+        mappedRepo=$(grep "^$gitrepo=" $MAPPED_REPOS_FILE)
+        invalidRepo=$(grep "^$gitrepo$" $INVALID_REPOS_FILE)
+
+        if [ ! -z "$mappedRepo" ]; then
+            gitorg=$(echo $mappedRepo | cut -d "=" -f2 | cut -d "#" -f2)
+            gitrepo=$(echo $mappedRepo | cut -d "=" -f2 | cut -d "#" -f1)
+            if [ ! -d "$gitrepo" ]; then
+                echo "Mapped Repo :"$gitrepo
+                git clone "https://github.com/$gitorg/$gitrepo.git"
+                echo
+            fi
+
+        elif [ -z "$invalidRepo" ]; then
+
+            git clone "https://github.com/wso2-support/$gitrepo.git"
+
+            if [[ $? != 0 ]]; then
+                echo
+                echo "Unable to locate the repository in wso2-support , hence checking with wso2-extensions"
+                git clone "https://github.com/wso2-extensions/$gitrepo.git"
+                if [[ $? != 0 ]]; then
+                    echo "$gitrepo" >>$INVALID_REPOS_FILE
+                fi
+                echo
+            else
+                echo
+            fi
+        fi
+    fi
+
+}
+
 while read line || [ -n "$line" ]; do
     echo
     prodVersion=$(echo $line | sed -e 's/support-/\wso2is-/g' | sed 's/\./\-/g')
@@ -41,7 +76,7 @@ while read line || [ -n "$line" ]; do
     echo "## $display_name" >>$REPO_VERSIONS_FILE
 
     cd product-is
-    git checkout $line -f 
+    git checkout $line -f
     git pull
     cd $CUR_DIR
     echo
@@ -71,42 +106,19 @@ while read line || [ -n "$line" ]; do
             final_key=$key"-"$prodVersion"='$value"
             echo $final_key >>$REPO_VERSIONS_FILE
 
-            if [ ! -d "$gitrepo" ]; then
-                mappedRepo=$(grep "^$gitrepo=" $MAPPED_REPOS_FILE)
-                invalidRepo=$(grep "^$gitrepo$" $INVALID_REPOS_FILE)
-
-                if [ ! -z "$mappedRepo" ]; then
-                    gitorg=$(echo $mappedRepo | cut -d "=" -f2 | cut -d "#" -f2)
-                    gitrepo=$(echo $mappedRepo | cut -d "=" -f2 | cut -d "#" -f1)
-                    if [ ! -d "$gitrepo" ]; then
-                        echo "Mapped Repo :"$gitrepo
-                        git clone "https://github.com/$gitorg/$gitrepo.git"
-                        echo
-                    fi
-
-                elif [ -z "$invalidRepo" ]; then
-
-                    git clone "https://github.com/wso2-support/$gitrepo.git"
-
-                    if [[ $? != 0 ]]; then
-                        echo
-                        echo "Unable to locate the repository in wso2-support , hence checking with wso2-extensions"
-                        git clone "https://github.com/wso2-extensions/$gitrepo.git"
-                        if [[ $? != 0 ]]; then
-                            echo "$gitrepo" >>$INVALID_REPOS_FILE
-                        fi
-                        echo
-                    else
-                        echo
-                    fi
-                fi
-            fi
-
+            cloneRepo
         fi
 
     done <./temp-versions
     echo "" >>$REPO_VERSIONS_FILE
 done <$PRODCT_VER_FILE
+
+grep "^custom" $MAPPED_REPOS_FILE | while read line; do
+    echo "Clonning custom repos !"
+    gitrepo=$(echo $line | cut -d "=" -f1)
+    echo "$gitrepo"
+    cloneRepo
+done
 
 rm -rf ./temp-versions
 
