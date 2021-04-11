@@ -13,17 +13,23 @@ wrk_dir=$(pwd)
 PRODCT_VER_FILE=$wrk_dir'/product-is-versions'
 INVALID_REPOS_FILE=$wrk_dir'/invalid-repos'
 
+MAPPED_REPOS_FILE=$wrk_dir'/repo-mapping'
+
+if [ ! -f "$MAPPED_REPOS_FILE" ]; then
+curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/repo-mapping -o repo-mapping
+fi
+
 if [ ! -f "$PRODCT_VER_FILE" ]; then
-  curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/product-is-versions -o product-is-versions
+    curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/product-is-versions -o product-is-versions
 fi
 
 if [ ! -f "$INVALID_REPOS_FILE" ]; then
-  curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/invalid-repos -o invalid-repos
+    curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/invalid-repos -o invalid-repos
 fi
 
 DIR_PROD_IS=$wrk_dir'/product-is'
 if [ ! -d "$DIR_PROD_IS" ]; then
-git clone "https://github.com/wso2-support/product-is"
+    git clone "https://github.com/wso2-support/product-is"
 fi
 
 while read line || [ -n "$line" ]; do
@@ -64,24 +70,33 @@ while read line || [ -n "$line" ]; do
             final_key=$key"-"$prodVersion"='$value"
             echo $final_key >>repo-versions
 
-            
-            invalidRepo=$(grep "$gitrepo" $INVALID_REPOS_FILE)
-           
+            if [ ! -d "$gitrepo" ]; then
+                mappedRepo=$(grep "^$gitrepo=" $MAPPED_REPOS_FILE)
+                invalidRepo=$(grep "^$gitrepo$" $INVALID_REPOS_FILE)
 
-            if [ ! -d "$gitrepo" ] && [ -z "$invalidRepo" ]; then
-
-                git clone "https://github.com/wso2-support/$gitrepo.git"
-
-                if [[ $? != 0 ]]; then
-                    echo
-                    echo "Unable to locate the repository in wso2-support , hence checking with wso2-extensions"
-                    git clone "https://github.com/wso2-extensions/$gitrepo.git"
-                    if [[ $? != 0 ]]; then
-                        echo "$gitrepo" >>$INVALID_REPOS_FILE
+                if [ ! -z "$mappedRepo" ]; then
+                    gitorg=$(echo $mappedRepo | cut -d "=" -f2 | cut -d "#" -f2)
+                    gitrepo=$(echo $mappedRepo | cut -d "=" -f2 | cut -d "#" -f1)
+                    if [ ! -d "$gitrepo" ]; then
+                        echo "Mapped Repo :"$gitrepo
+                        git clone "https://github.com/$gitorg/$gitrepo.git"
                     fi
-                    echo
-                else
-                    echo
+
+                elif [ -z "$invalidRepo" ]; then
+
+                    git clone "https://github.com/wso2-support/$gitrepo.git"
+
+                    if [[ $? != 0 ]]; then
+                        echo
+                        echo "Unable to locate the repository in wso2-support , hence checking with wso2-extensions"
+                        git clone "https://github.com/wso2-extensions/$gitrepo.git"
+                        if [[ $? != 0 ]]; then
+                            echo "$gitrepo" >>$INVALID_REPOS_FILE
+                        fi
+                        echo
+                    else
+                        echo
+                    fi
                 fi
             fi
 
