@@ -17,7 +17,7 @@ REPO_VERSIONS_FILE=$wrk_dir'/artefacts/repo-versions'
 echo >$REPO_VERSIONS_FILE
 
 if [ ! -f "$MAPPED_REPOS_FILE" ]; then
-curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/artefacts/repo-mapping -o $MAPPED_REPOS_FILE
+    curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/artefacts/repo-mapping -o $MAPPED_REPOS_FILE
 fi
 
 if [ ! -f "$PRODCT_VER_FILE" ]; then
