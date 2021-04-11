@@ -1,9 +1,12 @@
 *
 */*
-!git-checkout
+
 !.gitignore
+
+!git-checkout.sh
 !git-clone-all.sh
-!product-is-repo-cloner.sh
-!properties.conf
+!git-clone-product-is.sh
+
+!invalid-repos
 !product-is-versions
 !repo-versions
