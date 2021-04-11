@@ -143,3 +143,4 @@ org-wso2-carbon-identity-developer
 maven-checkstyle-plugin
 samples-is
 org-wso2-orbit-org-apache-velocity
+json

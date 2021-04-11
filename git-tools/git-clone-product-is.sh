@@ -81,6 +81,7 @@ while read line || [ -n "$line" ]; do
                     if [ ! -d "$gitrepo" ]; then
                         echo "Mapped Repo :"$gitrepo
                         git clone "https://github.com/$gitorg/$gitrepo.git"
+                        echo
                     fi
 
                 elif [ -z "$invalidRepo" ]; then
