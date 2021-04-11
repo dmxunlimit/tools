@@ -3,15 +3,12 @@
 # usage : ./git-checkout <product_version> <force>
 # usage : ./git-checkout 5.2.0 y
 
-
 wrk_dir=$(pwd)
 REPO_FILE=$wrk_dir'/repo-versions'
 git config --global credential.helper cache
 
 if [ ! -f "$REPO_FILE" ]; then
-    printf "WARN : repo-versions file is missing , hence downloading from git. \n
-    if you wish to update the repo-versions use the script from here \n
-    https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/git-clone-product-is.sh"
+    printf "WARN : repo-versions file is missing , hence downloading from git. \nif you wish to update the repo-versions use the script from here https://git.io/JOTSj \n"
     curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/repo-versions -o repo-versions
 fi
 
