@@ -6,6 +6,7 @@
 !git-checkout.sh
 !git-clone-all.sh
 !git-clone-product-is.sh
+!test.sh
 
 !artefacts
 !invalid-repos
