@@ -7,7 +7,7 @@
 
 script_dir=$(dirname "$0")
 scriptBaseName="$(basename $0)"
-scriptFile="$script_dir/$scriptFilebaseNme"
+scriptFile="$script_dir/$scriptBaseName"
 scriptFilelst=$scriptFile"_latest"
 echo "Checking for latest version of the script $scriptFile !"
 
@@ -46,7 +46,7 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
 
     echo $crr_md5
     echo $remt_md5
-    
+
     if [ "$crr_md5" != "$remt_md5" ]; then
         echo "Update found for the script, hence updating."
         mv $scriptFilelst $scriptFile
