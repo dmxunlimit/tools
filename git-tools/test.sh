@@ -11,10 +11,6 @@ scriptFile="$script_dir/$scriptBaseName"
 scriptFilelst=$scriptFile"_latest"
 echo "Checking for latest version of the script $scriptFile !"
 
-if [ -f "$scriptFilelst" ]; then
-    rm -rf $scriptFilelst
-fi
-
 wget -q https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptBaseName -O $scriptFilelst
 
 if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
