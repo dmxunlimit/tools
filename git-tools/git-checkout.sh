@@ -21,7 +21,9 @@ else
     branch_version=$1
 fi
 
-if [ -z $2 ]; then
+force=$(echo "$2" | awk '{print tolower($0)}')
+
+if [ -z $force ]; then
     read -p 'Force checkout [no]: ' force
     if [ "$force" == "yes" ] || [ "$force" == "y" ]; then
         printf "\nWRAN : Force checkout , local changes will destroy !!\n"
@@ -29,8 +31,11 @@ if [ -z $2 ]; then
     else
         force=""
     fi
-else
+elif [ $force == "yes" ] || [ $force == "y" ]; then
+    printf "\nWRAN : Force checkout , local changes will destroy !!\n"
     force="-f"
+else
+    force=""
 fi
 
 gitCheckout() {
