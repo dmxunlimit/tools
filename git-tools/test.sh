@@ -26,11 +26,15 @@ if [ -f "$scriptFilelst" ]; then
         alias ls='ls --color=auto'
         crr_md5=$(md5sum $scriptFile)
         remt_md5=$(md5sum $scriptFilelst)
+        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
         ;;
     'Darwin')
         OS='Mac'
         crr_md5=$(md5 $scriptFile)
         remt_md5=$(md5 $scriptFilelst)
+        crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
+        remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
         ;;
     *)
         crr_md5=$(md5sum $scriptFile)
