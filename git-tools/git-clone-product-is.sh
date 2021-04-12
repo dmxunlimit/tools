@@ -80,8 +80,10 @@ while read line || [ -n "$line" ]; do
     echo
     prodVersion=$(echo $line | sed -e 's/support-/\wso2is-/g' | sed 's/\./\-/g')
     display_name=$(echo $line | sed -e 's/support-/\WSO2IS-/g')
+    mainVersion=$(echo $line | sed -e 's/support-//g')
     echo "### "$display_name" ###"
     echo "## $display_name" >>$REPO_VERSIONS_FILE
+    echo "product-is-$prodVersion='$mainVersion'" >>$REPO_VERSIONS_FILE
 
     cd product-is
     git checkout $line -f
