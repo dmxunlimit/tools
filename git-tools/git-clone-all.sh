@@ -1,51 +1,54 @@
 #!/bin/bash
 
-# ####
+##### Automated script update #####
 
-# script_dir=$(dirname "$0")
-# scriptFile="git-clone-all.sh"
-# scriptFilelst="git-clone-all.sh_latest"
-# echo "Checking for latest version of the script !"
+script_dir=$(dirname "$0")
+scriptBaseName="$(basename $0)"
+scriptFile="$script_dir/$scriptBaseName"
+scriptFilelst=$scriptFile"_latest"
+echo "Checking for latest version of the script $scriptBaseName !"
 
-# if [ -f "$scriptFilelst" ]; then
-# rm -rf $script_dir'/'$scriptFilelst
-# fi
+curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptBaseName -o $scriptFilelst
 
-# wget -q https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptFile -O $script_dir'/'$scriptFilelst
+if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
+    # Detect the platform (similar to $OSTYPE)
+    OS="$(uname)"
+    case $OS in
+    'Linux')
+        OS='Linux'
+        alias ls='ls --color=auto'
+        crr_md5=$(md5sum $scriptFile)
+        remt_md5=$(md5sum $scriptFilelst)
+        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
+        ;;
+    'Darwin')
+        OS='Mac'
+        crr_md5=$(md5 $scriptFile)
+        remt_md5=$(md5 $scriptFilelst)
+        crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
+        remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
+        ;;
+    *)
+        crr_md5=$(md5sum $scriptFile)
+        remt_md5=$(md5sum $scriptFilelst)
+        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
+        ;;
+    esac
 
-# # Detect the platform (similar to $OSTYPE)
-# OS="$(uname)"
-# case $OS in
-# 'Linux')
-#     OS='Linux'
-#     alias ls='ls --color=auto'
-#     crr_md5=$(md5sum $script_dir'/'$scriptFile)
-#     remt_md5=$(md5sum $script_dir'/'$scriptFilelst)
-#     ;;
-# 'Darwin')
-#     OS='Mac'
-#     crr_md5=$(md5 $script_dir'/'$scriptFile)
-#     remt_md5=$(md5 $script_dir'/'$scriptFilelst)
-#     ;;
-# *)
-#     crr_md5=$(md5sum $script_dir'/'$scriptFile)
-#     remt_md5=$(md5sum $script_dir'/'$scriptFilelst)
-#     ;;
-# esac
+    if [ "$crr_md5" != "$remt_md5" ]; then
+        printf "\nUpdate found for the script, hence updating."
+        mv $scriptFilelst $scriptFile
+        chmod 755 $scriptFile
+        printf "\nPlease run it again !\n"
+        exit
+    else
+        rm -rf $scriptFilelst
+    fi
+fi
 
-# crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
-# remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
-
-# if [ "$crr_md5" != "$remt_md5" ]; then
-#     echo "Update found for the script, hence updating."
-#     mv $script_dir"/$scriptFilelst" $script_dir"/$scriptFile"
-#     chmod 755 $script_dir"/$scriptFile"
-#     printf "Script updated ! \n\nPlease run it again."
-#     exit
-# else
-#   rm -rf $script_dir"/$scriptFilelst"
-# fi
-# ####
+####
 
 wrk_dir=$(pwd)
 mkdir -p $wrk_dir'/artefacts'
