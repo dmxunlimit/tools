@@ -8,7 +8,7 @@
 script_dir=$(dirname "$0")
 scriptFilebaseNme="$(basename $0)"
 scriptFile="$script_dir/$scriptFilebaseNme"
-scriptFilelst=scriptFile"_latest"
+scriptFilelst=$scriptFile"_latest"
 echo "Checking for latest version of the script $scriptFile !"
 
 if [ -f "$scriptFilelst" ]; then
@@ -17,7 +17,7 @@ fi
 
 wget -q https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptFilebaseNme -O $scriptFilelst
 
-if [ -f "$criptFilelst" ]; then
+if [ -f "$scriptFilelst" ]; then
     # Detect the platform (similar to $OSTYPE)
     OS="$(uname)"
     case $OS in
