@@ -40,9 +40,6 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
         ;;
     esac
 
-    echo $crr_md5
-    echo $remt_md5
-
     if [ "$crr_md5" != "$remt_md5" ]; then
         echo "Update found for the script, hence updating."
         mv $scriptFilelst $scriptFile
