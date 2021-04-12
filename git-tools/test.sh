@@ -3,10 +3,10 @@
 # usage : ./git-checkout <product_version> <force>
 # usage : ./git-checkout 5.2.0 y
 
-####
+##### Automated script update #####
 
 script_dir=$(dirname "$0")
-scriptFilebaseNme="$(basename $0)"
+scriptBaseName="$(basename $0)"
 scriptFile="$script_dir/$scriptFilebaseNme"
 scriptFilelst=$scriptFile"_latest"
 echo "Checking for latest version of the script $scriptFile !"
@@ -15,7 +15,7 @@ if [ -f "$scriptFilelst" ]; then
     rm -rf $scriptFilelst
 fi
 
-wget -q https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptFilebaseNme -O $scriptFilelst
+wget -q https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptBaseName -O $scriptFilelst
 
 if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
     # Detect the platform (similar to $OSTYPE)
@@ -39,13 +39,14 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
     *)
         crr_md5=$(md5sum $scriptFile)
         remt_md5=$(md5sum $scriptFilelst)
+        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
         ;;
     esac
 
-    crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
-    remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
     echo $crr_md5
     echo $remt_md5
+    
     if [ "$crr_md5" != "$remt_md5" ]; then
         echo "Update found for the script, hence updating."
         mv $scriptFilelst $scriptFile
@@ -56,6 +57,7 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
         rm -rf $scriptFilelst
     fi
 fi
+
 ####
 exit
 CUR_DIR=$(pwd)
