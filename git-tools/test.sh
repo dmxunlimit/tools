@@ -11,7 +11,7 @@ scriptFile="$script_dir/$scriptBaseName"
 scriptFilelst=$scriptFile"_latest"
 echo "Checking for latest version of the script $scriptFile !"
 
-wget -q https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptBaseName -O $scriptFilelst
+curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptBaseName -o $scriptFilelst
 
 if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
     # Detect the platform (similar to $OSTYPE)
