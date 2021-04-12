@@ -41,10 +41,10 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
     esac
 
     if [ "$crr_md5" != "$remt_md5" ]; then
-        echo "Update found for the script, hence updating."
+        printf "\nUpdate found for the script, hence updating."
         mv $scriptFilelst $scriptFile
         chmod 755 $scriptFile
-        printf "Script updated ! \n\nPlease run it again."
+        printf "\nPlease run it again !\n"
         exit
     else
         rm -rf $scriptFilelst
