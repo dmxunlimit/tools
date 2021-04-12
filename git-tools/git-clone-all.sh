@@ -1,18 +1,17 @@
 #!/bin/bash
 
-wrk_dir=$(pwd)
+####
+
 script_dir=$(dirname "$0")
-mkdir -p $wrk_dir'/artefacts'
+scriptFile="git-clone-all.sh"
+scriptFilelst="git-clone-all.sh_latest"
+echo "Checking for latest version of the script !"
 
-repoFile=$wrk_dir'/artefacts/git-repos'
-tmpFile=$wrk_dir'/artefacts/tmp'
-
-if test -f "$repoFile"; then
-    rm -rf $repoFile
+if [ -f "$scriptFilelst" ]; then
+rm -rf $script_dir'/'$scriptFilelst
 fi
 
-echo "Checking for latest version of the script !"
-wget -q https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/git-clone-all.sh -O "$script_dir/git-clone-all.sh_latest"
+wget -q https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptFile -O $script_dir'/'$scriptFilelst
 
 # Detect the platform (similar to $OSTYPE)
 OS="$(uname)"
@@ -20,17 +19,17 @@ case $OS in
 'Linux')
     OS='Linux'
     alias ls='ls --color=auto'
-    crr_md5=$(md5sum git-clone-all.sh)
-    remt_md5=$(md5sum git-clone-all.sh_latest)
+    crr_md5=$(md5sum $script_dir'/'$scriptFile)
+    remt_md5=$(md5sum $script_dir'/'$scriptFilelst)
     ;;
 'Darwin')
     OS='Mac'
-    crr_md5=$(md5 git-clone-all.sh)
-    remt_md5=$(md5 git-clone-all.sh_latest)
+    crr_md5=$(md5 $script_dir'/'$scriptFile)
+    remt_md5=$(md5 $script_dir'/'$scriptFilelst)
     ;;
 *)
-    crr_md5=$(md5sum git-clone-all.sh)
-    remt_md5=$(md5sum git-clone-all.sh_latest)
+    crr_md5=$(md5sum $script_dir'/'$scriptFile)
+    remt_md5=$(md5sum $script_dir'/'$scriptFilelst)
     ;;
 esac
 
@@ -39,12 +38,23 @@ remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
 
 if [ "$crr_md5" != "$remt_md5" ]; then
     echo "Update found for the script, hence updating."
-    mv $script_dir"/git-clone-all.sh_latest" $script_dir"/git-clone-all.sh"
-    chmod 755 $script_dir"/git-clone-all.sh"
+    mv $script_dir"/$scriptFilelst" $script_dir"/$scriptFile"
+    chmod 755 $script_dir"/$scriptFile"
     printf "Script updated ! \n\nPlease run it again."
     exit
 else
-    rm -rf $script_dir"/git-clone-all.sh_latest"
+  rm -rf $script_dir"/$scriptFilelst"
+fi
+####
+
+wrk_dir=$(pwd)
+mkdir -p $wrk_dir'/artefacts'
+
+repoFile=$wrk_dir'/artefacts/git-repos'
+tmpFile=$wrk_dir'/artefacts/tmp'
+
+if test -f "$repoFile"; then
+    rm -rf $repoFile
 fi
 
 org="wso2"
