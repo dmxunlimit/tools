@@ -44,7 +44,7 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
         printf "\nUpdate found for the script, hence updating."
         mv $scriptFilelst $scriptFile
         chmod 755 $scriptFile
-        printf "\nPlease run it again !\n"
+        printf "\nPlease run it again !!\n"
         exit
     else
         rm -rf $scriptFilelst
