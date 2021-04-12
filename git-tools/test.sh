@@ -17,7 +17,7 @@ fi
 
 wget -q https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptFilebaseNme -O $scriptFilelst
 
-if [ -f "$scriptFilelst" ]; then
+if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
     # Detect the platform (similar to $OSTYPE)
     OS="$(uname)"
     case $OS in
