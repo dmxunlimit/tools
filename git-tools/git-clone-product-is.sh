@@ -155,10 +155,13 @@ while read line || [ -n "$line" ]; do
             if [[ "$value" == *"jaggery.extensions.version"* ]]; then
                 value=$jag_version
             fi
-            final_key=$key"-"$prodVersion"='$value"
+            
+            cloneRepo
+
+            final_key=$gitrepo"-"$prodVersion"='$value"
             echo $final_key >>$REPO_VERSIONS_FILE
 
-            cloneRepo
+            
         fi
 
     done <./temp-versions
