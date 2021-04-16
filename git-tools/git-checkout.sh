@@ -41,11 +41,11 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
     esac
 
     if [ "$crr_md5" != "$remt_md5" ]; then
-        printf "\nUpdate found for the script, hence updating."
-        mv $scriptFilelst $scriptFile
-        chmod 755 $scriptFile
-        printf "\nPlease run it again !!\n"
-        exit
+        printf "\nUpdate found for the script, hence updating.\n"
+        # mv $scriptFilelst $scriptFile
+        # chmod 755 $scriptFile
+        # printf "\nPlease run it again !!\n"
+        # exit
     else
         rm -rf $scriptFilelst
     fi
@@ -170,7 +170,16 @@ getBranch() {
 
 echo "$branch"
 
+# backup existing idea indexing data
+if [ -d $wrk_dir"/.idea" ]; then
+cd $wrk_dir"/product-is"
+current_branch=$(git branch --show-current)
+mv $wrk_dir"/.idea" $wrk_dir"/artefacts/.idea_"$current_branch
+cd $wrk_dir
+fi
+
 printf "Updating remotes for all repositories...\n"
+
 for i in $(find . -mindepth 1 -maxdepth 1 -type d); do
     if [ $i != "./.idea" ] && [ $i != "./artefacts" ]; then
         cd "$i"
@@ -182,5 +191,13 @@ for i in $(find . -mindepth 1 -maxdepth 1 -type d); do
         cd $wrk_dir
     fi
 done
+
+# restore existing idea indexing data
+cd $wrk_dir"/product-is"
+current_branch=$(git branch --show-current)
+if [ -d $wrk_dir"/artefacts/.idea_"$current_branch ]; then
+mv $wrk_dir"/artefacts/.idea_"$current_branch $wrk_dir"/.idea" 
+cd $wrk_dir
+fi
 
 printf "\nCompleted!\n"
