@@ -1,7 +1,7 @@
 #!/bin/sh
 
 checkProsess() {
-    lprocess=$(ps aux | grep -v grep | grep loadTestSuiteRunner | awk '{print $2}')
+    lprocess=$(ps aux | grep -v grep | grep loadtest.sh | awk '{print $2}')
     jprocess=$(ps aux | grep -v grep | grep jmeter | awk '{print $2}')
 
     if [ ! -z "$lprocess" ]; then
