@@ -61,7 +61,7 @@ sudo chmod 755 stop.sh
 curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/loadtest.sh -o $CURRENTDIR/tools/loadtest.sh
 sudo chmod 755 $CURRENTDIR/tools/loadtest.sh
 
-pname=loadtest
+pname=loadtest.sh
 process=$(ps aux | grep -v grep | grep $pname | awk '{print $2}')
 
 if [ -z "$process" ]; then
