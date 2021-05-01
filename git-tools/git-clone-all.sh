@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Detect the platform (similar to $OSTYPE)
+OS="$(uname)"
+case $OS in
+'Linux')
+    git config --global credential.helper cache
+    ;;
+*NT*)
+    git config --system core.longpaths true
+    ;;
+esac
+
 ##### Automated script update #####
 
 script_dir=$(dirname "$0")
@@ -8,14 +19,11 @@ scriptFile="$script_dir/$scriptBaseName"
 scriptFilelst=$scriptFile"_latest"
 echo "Checking for latest version of the script $scriptBaseName !"
 
-curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptBaseName -o $scriptFilelst
+curl -sf https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptBaseName -o $scriptFilelst
 
 if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
-    # Detect the platform (similar to $OSTYPE)
-    OS="$(uname)"
     case $OS in
     'Linux')
-        OS='Linux'
         alias ls='ls --color=auto'
         crr_md5=$(md5sum $scriptFile)
         remt_md5=$(md5sum $scriptFilelst)
@@ -23,11 +31,16 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
         remt_md5=$(echo $remt_md5 | cut -d " " -f1)
         ;;
     'Darwin')
-        OS='Mac'
         crr_md5=$(md5 $scriptFile)
         remt_md5=$(md5 $scriptFilelst)
         crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
         remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
+        ;;
+    *NT*)
+        crr_md5=$(md5sum $scriptFile)
+        remt_md5=$(md5sum $scriptFilelst)
+        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
         ;;
     *)
         crr_md5=$(md5sum $scriptFile)
