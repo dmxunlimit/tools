@@ -8,6 +8,7 @@ case $OS in
     ;;
 *NT*)
     git config --system core.longpaths true
+    git config --global credential.helper wincred
     ;;
 esac
 
