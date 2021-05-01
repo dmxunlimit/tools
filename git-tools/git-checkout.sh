@@ -72,8 +72,6 @@ mkdir -p $wrk_dir'/artefacts'
 
 REPO_FILE=$wrk_dir'/artefacts/repo-versions'
 
-git config --global credential.helper cache
-
 if [ ! -f "$REPO_FILE" ]; then
     printf "WARN : repo-versions file is missing , hence downloading from git. \nif you wish to update the repo-versions use the script from here https://git.io/JOTSj \n"
     curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/artefacts/repo-versions -o $REPO_FILE
