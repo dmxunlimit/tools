@@ -1,5 +1,14 @@
 #!/bin/sh
 
+# Detect the platform (similar to $OSTYPE)
+OS="$(uname)"
+case $OS in
+'Linux')
+  echo "Setting IST Time Zone !"
+  sudo timedatectl set-timezone Asia/Colombo
+  ;;
+
+esac
 
 ##### Automated script update #####
 
@@ -12,41 +21,38 @@ echo "Checking for latest version of the script $scriptBaseName !"
 curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/$scriptBaseName -o $scriptFilelst
 
 if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
-    # Detect the platform (similar to $OSTYPE)
-    OS="$(uname)"
-    case $OS in
-    'Linux')
-        OS='Linux'
-        alias ls='ls --color=auto'
-        crr_md5=$(md5sum $scriptFile)
-        remt_md5=$(md5sum $scriptFilelst)
-        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
-        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
-        ;;
-    'Darwin')
-        OS='Mac'
-        crr_md5=$(md5 $scriptFile)
-        remt_md5=$(md5 $scriptFilelst)
-        crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
-        remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
-        ;;
-    *)
-        crr_md5=$(md5sum $scriptFile)
-        remt_md5=$(md5sum $scriptFilelst)
-        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
-        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
-        ;;
-    esac
 
-    if [ "$crr_md5" != "$remt_md5" ]; then
-        printf "\nUpdate found for the script, hence updating."
-        mv $scriptFilelst $scriptFile
-        chmod 755 $scriptFile
-        printf "\nPlease run it again !!\n"
-        exit
-    else
-        rm -rf $scriptFilelst
-    fi
+  case $OS in
+  'Linux')
+    alias ls='ls --color=auto'
+    crr_md5=$(md5sum $scriptFile)
+    remt_md5=$(md5sum $scriptFilelst)
+    crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+    remt_md5=$(echo $remt_md5 | cut -d " " -f1)
+    ;;
+  'Darwin')
+    crr_md5=$(md5 $scriptFile)
+    remt_md5=$(md5 $scriptFilelst)
+    crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
+    remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
+    ;;
+  *)
+    crr_md5=$(md5sum $scriptFile)
+    remt_md5=$(md5sum $scriptFilelst)
+    crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+    remt_md5=$(echo $remt_md5 | cut -d " " -f1)
+    ;;
+  esac
+
+  if [ "$crr_md5" != "$remt_md5" ]; then
+    printf "\nUpdate found for the script, hence updating."
+    mv $scriptFilelst $scriptFile
+    chmod 755 $scriptFile
+    printf "\nPlease run it again !!\n"
+    exit
+  else
+    rm -rf $scriptFilelst
+  fi
 fi
 
 ####
@@ -73,10 +79,6 @@ if [ -z "$process" ]; then
     exit 1
   fi
 
-  
-  echo "Setting IST Time Zone !"
-  sudo timedatectl set-timezone Asia/Colombo
-
   if [ ! -d "$CURRENTDIR/tools/jmeter" ]; then
 
     if [ ! -f $CURRENTDIR/tools/*jmeter* ]; then
@@ -102,8 +104,8 @@ if [ -z "$process" ]; then
       mv $CURRENTDIR/tools/temp/* $CURRENTDIR/tools/java
     fi
 
-    echo -e "\nexport JAVA_HOME='$CURRENTDIR/tools/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >> ~/.bashrc && source ~/.bashrc
-    
+    echo -e "\nexport JAVA_HOME='$CURRENTDIR/tools/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc && source ~/.bashrc
+
     echo "JAVA_HOME Set to : $JAVA_HOME"
   else
     echo "Using Existing JAVA_HOME : $JAVA_HOME"
@@ -113,7 +115,7 @@ if [ -z "$process" ]; then
 
   sleep 1
 
-  echo -e "\n" >> nohup.out
+  echo -e "\n" >>nohup.out
   nohup bash $CURRENTDIR/tools/loadtest.sh $CURRENTDIR $1 &
   echo "\nBackgroud job created ./loadtest.sh !" && tail -n 0 -f nohup.out
 
