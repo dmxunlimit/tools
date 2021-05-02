@@ -101,8 +101,9 @@ if [ -z "$process" ]; then
       tar -xf $CURRENTDIR/tools/*jre* -C $CURRENTDIR/tools/temp
       mv $CURRENTDIR/tools/temp/* $CURRENTDIR/tools/java
     fi
-    export JAVA_HOME="$CURRENTDIR/tools/java"
-    export PATH=$JAVA_HOME/bin:$PATH
+
+    echo -e "\nexport JAVA_HOME='/home/ubuntu/jdk' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >> ~/.bashrc && source ~/.bashrc
+    
     echo "JAVA_HOME Set to : $JAVA_HOME"
   else
     echo "Using Existing JAVA_HOME : $JAVA_HOME"
