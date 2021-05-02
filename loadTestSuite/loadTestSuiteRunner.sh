@@ -102,7 +102,7 @@ if [ -z "$process" ]; then
       mv $CURRENTDIR/tools/temp/* $CURRENTDIR/tools/java
     fi
 
-    echo -e "\nexport JAVA_HOME='/home/ubuntu/jdk' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >> ~/.bashrc && source ~/.bashrc
+    echo -e "\nexport JAVA_HOME='$CURRENTDIR/tools/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >> ~/.bashrc && source ~/.bashrc
     
     echo "JAVA_HOME Set to : $JAVA_HOME"
   else
@@ -113,8 +113,9 @@ if [ -z "$process" ]; then
 
   sleep 1
 
+  echo -e "\n" >> nohup.out
   nohup bash $CURRENTDIR/tools/loadtest.sh $CURRENTDIR $1 &
-  echo "\nBackgroud job created ./loadtest.sh !" && sleep 1 && tail -n 0 -f nohup.out
+  echo "\nBackgroud job created ./loadtest.sh !" && tail -n 0 -f nohup.out
 
 else
   printf "Already running process found for $pname \n"
