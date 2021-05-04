@@ -1,14 +1,16 @@
 #!/bin/sh
 
 checkProsess() {
-    lprocess=$(ps aux | grep -v grep | grep loadtest.sh | awk '{print $2}')
-    jprocess=$(ps aux | grep -v grep | grep jmeter | awk '{print $2}')
+    lprocess=$(ps aux | grep -v grep | grep loadtest.sh)
+    jprocess=$(ps aux | grep -v grep | grep jmeter)
 
     if [ ! -z "$lprocess" ]; then
         echo "LoadTest PID :$lprocess"
+        lprocess=$(lprocess| awk '{print $2}')
     fi
     if [ ! -z "$jprocess" ]; then
         echo "Jmeter PID :$jprocess"
+        jprocess=$(jprocess| awk '{print $2}')
     fi
 
 }
