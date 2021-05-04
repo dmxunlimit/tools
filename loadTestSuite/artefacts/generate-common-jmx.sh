@@ -6,13 +6,14 @@ artefactDir="$CURRENTDIR/.artefacts/"
 if [ ! -d "$artefactDir/.jmx-common-scripts" ]; then
 curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/artefacts/jmx-common-scripts.tar -o $artefactDir/jmx-common-scripts.tar
 tar -xf $artefactDir/jmx-common-scripts.tar -C $artefactDir/
-
+mkdir -p $CURRENTDIR/jmx_scripts
+cp -rf $artefactDir/jmx-common-scripts/* jmx_scripts
+else
+cp -rf $artefactDir/jmx-common-scripts/* jmx_scripts
 fi
 
-if [ -d "$artefactDir/jmx-common-scripts" ]; then
-mkdir -p jmx_scripts
+if [ -d "$CURRENTDIR/jmx_scripts" ]; then
 
-cp -rf $artefactDir/jmx-common-scripts/* jmx_scripts
 
 hostname='localhost'
 port=9443
