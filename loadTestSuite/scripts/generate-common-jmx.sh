@@ -4,10 +4,12 @@ CURRENTDIR=$(pwd)
 
 if [ ! -d "$CURRENTDIR/tools/.jmx-common-scripts" ]; then
 curl -sL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/scripts/.jmx-common-scripts.tar -o $CURRENTDIR/tools/.jmx-common-scripts.tar
-tar -xf $CURRENTDIR/tools/.jmx-common-scripts.tar -C $CURRENTDIR/tools/ 
+tar -xf $CURRENTDIR/tools/.jmx-common-scripts.tar -C $CURRENTDIR/tools/
+mv $CURRENTDIR/tools/jmx-common-scripts $CURRENTDIR/tools/.jmx-common-scripts
+
 fi
 
-if [ ! -d "$CURRENTDIR/tools/.jmx-common-scripts" ]; then
+if [ -d "$CURRENTDIR/tools/.jmx-common-scripts" ]; then
 mkdir -p jmx_scripts
 
 cp -rf $CURRENTDIR/tools/.jmx-common-scripts/* jmx_scripts
@@ -57,6 +59,8 @@ sed -i '' -e 's/base64AdminCred_val/'$cred'/g' jmx_scripts/*
 sed -i '' -e 's/admin_user_val/'$adminuser'/g' jmx_scripts/*
 
 sed -i '' -e 's/admin_password_val/'$adminpass'/g' jmx_scripts/*
+
+echo "Common JMX scripts has generated in jmx_scripts !"
 else
 echo "Unable to get the base jmx scripts !"
 fi
