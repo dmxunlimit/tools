@@ -67,6 +67,9 @@ sudo chmod 755 stop.sh
 curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/loadtest.sh -o $CURRENTDIR/tools/loadtest.sh
 sudo chmod 755 $CURRENTDIR/tools/loadtest.sh
 
+curl -s https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/scripts/generate-common-jmx.sh -o generate-scritps.sh
+sudo chmod 755 $CURRENTDIR/generate-scritps.sh
+
 pname=loadtest.sh
 process=$(ps aux | grep -v grep | grep $pname | awk '{print $2}')
 
