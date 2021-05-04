@@ -78,7 +78,7 @@ if [ -z "$process" ]; then
   if [ -z "$1" ]; then
     echo "Provide the directory of the JMX files. \n"
     echo "Ex:"
-    echo "./start.sh /home/jmxScripts"
+    echo "./loadtest-runner.sh jmxScripts"
     echo "\n*This also supports continues multi Directory/File execution based on the order of the Directory/file name"
     exit 1
   fi
