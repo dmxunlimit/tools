@@ -1,18 +1,18 @@
 #!/bin/bash
 
 CURRENTDIR=$(pwd)
+artefactDir="$CURRENTDIR/.artefacts/"
 
-if [ ! -d "$CURRENTDIR/tools/.jmx-common-scripts" ]; then
-curl -sL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/scripts/.jmx-common-scripts.tar -o $CURRENTDIR/tools/.jmx-common-scripts.tar
-tar -xf $CURRENTDIR/tools/.jmx-common-scripts.tar -C $CURRENTDIR/tools/
-mv $CURRENTDIR/tools/jmx-common-scripts $CURRENTDIR/tools/.jmx-common-scripts
+if [ ! -d "$artefactDir/.jmx-common-scripts" ]; then
+curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/artefacts/jmx-common-scripts.tar -o $artefactDir/jmx-common-scripts.tar
+tar -xf $artefactDir/jmx-common-scripts.tar -C $artefactDir/
 
 fi
 
-if [ -d "$CURRENTDIR/tools/.jmx-common-scripts" ]; then
+if [ -d "$artefactDir/jmx-common-scripts" ]; then
 mkdir -p jmx_scripts
 
-cp -rf $CURRENTDIR/tools/.jmx-common-scripts/* jmx_scripts
+cp -rf $artefactDir/jmx-common-scripts/* jmx_scripts
 
 hostname='localhost'
 port=9443
