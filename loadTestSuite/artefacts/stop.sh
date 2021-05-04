@@ -5,12 +5,14 @@ checkProsess() {
     jprocess=$(ps aux | grep -v grep | grep jmeter)
 
     if [ ! -z "$lprocess" ]; then
-        echo "LoadTest PID :$lprocess"
-        lprocess=$(lprocess| awk '{print $2}')
+        echo "\nLoadTest Process :"
+        echo $lprocess
+        lprocess=$(echo $lprocess | awk '{print $2}')
     fi
     if [ ! -z "$jprocess" ]; then
-        echo "Jmeter PID :$jprocess"
-        jprocess=$(jprocess| awk '{print $2}')
+        echo "\nJmeter Process :"
+        echo $jprocess
+        jprocess=$(echo $jprocess | awk '{print $2}')
     fi
 
 }
@@ -18,6 +20,7 @@ checkProsess() {
 checkProsess
 
 if [ ! -z "$lprocess" ] || [ ! -z "$jprocess" ]; then
+    echo ""
     read -p "Do you wish to kill the service y/n :" killme
     if [ "$killme" = "y" ]; then
 
