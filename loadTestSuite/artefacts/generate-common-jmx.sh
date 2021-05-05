@@ -3,14 +3,11 @@
 CURRENTDIR=$(pwd)
 artefactDir="$CURRENTDIR/.artefacts/"
 
-if [ ! -d "$artefactDir/.jmx-common-scripts" ]; then
-    curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/artefacts/jmx-common-scripts.tar -o $artefactDir/jmx-common-scripts.tar
-    tar -xf $artefactDir/jmx-common-scripts.tar -C $artefactDir/
-    mkdir -p $CURRENTDIR/jmx_scripts
-    cp -rf $artefactDir/jmx-common-scripts/* $CURRENTDIR/jmx_scripts
-else
-    cp -rf $artefactDir/jmx-common-scripts/* $CURRENTDIR/jmx_scripts
-fi
+rm -rf $artefactDir/jmx-common-scripts
+curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/artefacts/jmx-common-scripts.tar -o $artefactDir/jmx-common-scripts.tar
+tar -xf $artefactDir/jmx-common-scripts.tar -C $artefactDir/
+mkdir -p $CURRENTDIR/jmx_scripts
+cp -rf $artefactDir/jmx-common-scripts/* $CURRENTDIR/jmx_scripts
 
 JmxUpdate() {
 
@@ -34,7 +31,6 @@ if [ -d "$CURRENTDIR/jmx_scripts" ]; then
     read -ep "port [$port]: " input
     port=${input:-$port}
     JmxUpdate port_val $port
-
 
     adminuser='admin'
     read -ep "admin username [$adminuser]: " input
