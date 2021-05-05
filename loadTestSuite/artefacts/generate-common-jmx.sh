@@ -12,15 +12,30 @@ else
     cp -rf $artefactDir/jmx-common-scripts/* $CURRENTDIR/jmx_scripts
 fi
 
+JmxUpdate() {
+
+    key=$1
+    value=$2
+
+    sed -i.bkp 's/'$key'/'$value'/g' $CURRENTDIR/jmx_scripts/*
+
+    rm -rf $CURRENTDIR/jmx_scripts/*.bkp
+
+}
+
 if [ -d "$CURRENTDIR/jmx_scripts" ]; then
 
     hostname='localhost'
     read -ep "hostname/ip [$hostname]: " input
     hostname=${input:-$hostname}
+    JmxUpdate() hostname $hostname
 
     port=9443
     read -ep "port [$port]: " input
     port=${input:-$port}
+    JmxUpdate() hostname $hostname
+
+    exit
 
     adminuser='admin'
     read -ep "admin username [$adminuser]: " input
@@ -58,35 +73,35 @@ if [ -d "$CURRENTDIR/jmx_scripts" ]; then
 
     cred=$(echo -n $adminuser:$adminpass | base64)
 
-    for file in $CURRENTDIR/jmx_scripts/*.jmx; do
+    # for file in $CURRENTDIR/jmx_scripts/*.jmx; do
 
-        sed -i.bkp 's/hostname_val/'$hostname'/g' $file
+    #     sed -i.bkp 's/hostname_val/'$hostname'/g' $file
 
-        sed -i.bkp 's/port_val/'$port'/g' $file
-        
-        ###
-        sed -i.bkp 's/userCount_val/'$NoUser'/g' $file
+    #     sed -i.bkp 's/port_val/'$port'/g' $file
 
-        sed -i.bkp 's/sp_apps_val/'$NoApps'/g' $file
+    #     ###
+    #     sed -i.bkp 's/userCount_val/'$NoUser'/g' $file
 
-        sed -i.bkp 's/startCounter_val/'$startCounter'/g' $file
+    #     sed -i.bkp 's/sp_apps_val/'$NoApps'/g' $file
 
-        ###
-        sed -i.bkp 's/timeToRun_val/'$timeToRun'/g' $file
+    #     sed -i.bkp 's/startCounter_val/'$startCounter'/g' $file
 
-        sed -i.bkp 's/concurrency_val/'$concurrency'/g' $file
+    #     ###
+    #     sed -i.bkp 's/timeToRun_val/'$timeToRun'/g' $file
 
-        sed -i.bkp 's/rampUpPeriod_val/'$rampUpPeriod'/g' $file
+    #     sed -i.bkp 's/concurrency_val/'$concurrency'/g' $file
 
-        ##
-        sed -i.bkp 's/base64AdminCred_val/'$cred'/g' $file
+    #     sed -i.bkp 's/rampUpPeriod_val/'$rampUpPeriod'/g' $file
 
-        sed -i.bkp 's/admin_user_val/'$adminuser'/g' $file
+    #     ##
+    #     sed -i.bkp 's/base64AdminCred_val/'$cred'/g' $file
 
-        sed -i.bkp 's/admin_password_val/'$adminpass'/g' $file
+    #     sed -i.bkp 's/admin_user_val/'$adminuser'/g' $file
 
-        rm -rf $CURRENTDIR/jmx_scripts/*.bkp
-    done
+    #     sed -i.bkp 's/admin_password_val/'$adminpass'/g' $file
+
+    #     rm -rf $CURRENTDIR/jmx_scripts/*.bkp
+    # done
     echo "Common JMX scripts has generated in jmx_scripts !"
 else
     echo "Unable to get the base jmx scripts !"
