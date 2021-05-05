@@ -14,19 +14,45 @@ fi
 
 if [ -d "$CURRENTDIR/jmx_scripts" ]; then
 
-
 hostname='localhost'
-port=9443
-adminuser='admin'
-adminpass='admin'
+read -e -p "hostname/ip name [$hostname]: " input
+hostname=${input:-$hostname}
 
-NoUser=1000
+port=9443
+read -e -p "port [$port]: " input
+port=${input:-$port}
+
+adminuser='admin'
+read -e -p "admin username [$adminuser]: " input
+adminuser=${input:-$adminuser}
+
+adminpass='admin'
+read -e -p "admin password [$adminpass]: " input
+adminpass=${input:-$adminpass}
+
+NoUser=500
+read -e -p "number of users [$NoUser]: " input
+NoUser=${input:-$NoUser}
+
 NoApps=200
+read -e -p "number of apps [$NoApps]: " input
+NoApps=${input:-$NoApps}
+
 startCounter=1
+read -e -p "start counter [$startCounter]: " input
+startCounter=${input:-$startCounter}
 
 concurrency=50
+read -e -p "threads [$concurrency]: " input
+concurrency=${input:-$concurrency}
+
 timeToRunInMinutes=30
+read -e -p "time to run in minutes [$timeToRunInMinutes]: " input
+timeToRunInMinutes=${input:-$timeToRunInMinutes}
+
 rampUpPeriod=10
+read -e -p "ramp up time [$rampUpPeriod]: " input
+rampUpPeriod=${input:-$rampUpPeriod}
 
 timeToRun=$(( $timeToRunInMinutes * 60 ))
 
