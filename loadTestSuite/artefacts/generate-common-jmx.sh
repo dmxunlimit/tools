@@ -58,31 +58,35 @@ if [ -d "$CURRENTDIR/jmx_scripts" ]; then
 
     cred=$(echo -n $adminuser:$adminpass | base64)
 
-    sed -i.bkp -e 's/hostname_val/'$hostname'/g' $CURRENTDIR/jmx_scripts/*
+    for file in $CURRENTDIR/jmx_scripts/*.jmx; do
 
-    sed -i.bkp 's/port_val/'$port'/g' $CURRENTDIR/jmx_scripts/*
-  
-    sed -i.bkp 's/userCount_val/'$NoUser'/g' $CURRENTDIR/jmx_scripts/*
+        sed -i.bkp 's/hostname_val/'$hostname'/g' $file
 
-    sed -i.bkp 's/sp_apps_val/'$NoApps'/g' $CURRENTDIR/jmx_scripts/*
+        sed -i.bkp 's/port_val/'$port'/g' $file
+        
+        ###
+        sed -i.bkp 's/userCount_val/'$NoUser'/g' $file
 
-    sed -i.bkp 's/startCounter_val/'$startCounter'/g' $CURRENTDIR/jmx_scripts/*
+        sed -i.bkp 's/sp_apps_val/'$NoApps'/g' $file
 
-    ###
-    sed -i.bkp 's/timeToRun_val/'$timeToRun'/g' $CURRENTDIR/jmx_scripts/*
+        sed -i.bkp 's/startCounter_val/'$startCounter'/g' $file
 
-    sed -i.bkp 's/concurrency_val/'$concurrency'/g' $CURRENTDIR/jmx_scripts/*
+        ###
+        sed -i.bkp 's/timeToRun_val/'$timeToRun'/g' $file
 
-    sed -i.bkp 's/rampUpPeriod_val/'$rampUpPeriod'/g' $CURRENTDIR/jmx_scripts/*
+        sed -i.bkp 's/concurrency_val/'$concurrency'/g' $file
 
-    ##
-    sed -i.bkp 's/base64AdminCred_val/'$cred'/g' $CURRENTDIR/jmx_scripts/*
+        sed -i.bkp 's/rampUpPeriod_val/'$rampUpPeriod'/g' $file
 
-    sed -i.bkp 's/admin_user_val/'$adminuser'/g' $CURRENTDIR/jmx_scripts/*
+        ##
+        sed -i.bkp 's/base64AdminCred_val/'$cred'/g' $file
 
-    sed -i.bkp 's/admin_password_val/'$adminpass'/g' $CURRENTDIR/jmx_scripts/*
+        sed -i.bkp 's/admin_user_val/'$adminuser'/g' $file
 
-    rm -rf $CURRENTDIR/jmx_scripts/*.bkp
+        sed -i.bkp 's/admin_password_val/'$adminpass'/g' $file
+
+        rm -rf $CURRENTDIR/jmx_scripts/*.bkp
+    done
     echo "Common JMX scripts has generated in jmx_scripts !"
 else
     echo "Unable to get the base jmx scripts !"
