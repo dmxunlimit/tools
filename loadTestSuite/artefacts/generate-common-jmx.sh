@@ -33,33 +33,33 @@ timeToRun=$(( $timeToRunInMinutes * 60 ))
 cred=$(echo -n $adminuser:$adminpass | base64)
 
 ##
-sed -i '' -e 's/hostname_val/'$hostname'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/hostname_val/'$hostname'/g' -i $CURRENTDIR/jmx_scripts/*
 
-sed -i '' -e 's/port_val/'$port'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/port_val/'$port'/g' -i $CURRENTDIR/jmx_scripts/*
 
 
 ##
-sed -i '' -e 's/userCount_val/'$NoUser'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/userCount_val/'$NoUser'/g' -i $CURRENTDIR/jmx_scripts/*
 
-sed -i '' -e 's/sp_apps_val/'$NoApps'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/sp_apps_val/'$NoApps'/g' -i $CURRENTDIR/jmx_scripts/*
 
-sed -i '' -e 's/startCounter_val/'$startCounter'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/startCounter_val/'$startCounter'/g' -i $CURRENTDIR/jmx_scripts/*
 
 
 ###
-sed -i '' -e 's/timeToRun_val/'$timeToRun'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/timeToRun_val/'$timeToRun'/g' -i $CURRENTDIR/jmx_scripts/*
 
-sed -i '' -e 's/concurrency_val/'$concurrency'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/concurrency_val/'$concurrency'/g' -i $CURRENTDIR/jmx_scripts/*
 
-sed -i '' -e 's/rampUpPeriod_val/'$rampUpPeriod'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/rampUpPeriod_val/'$rampUpPeriod'/g' -i $CURRENTDIR/jmx_scripts/*
 
 
 ##
-sed -i '' -e 's/base64AdminCred_val/'$cred'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/base64AdminCred_val/'$cred'/g' -i $CURRENTDIR/jmx_scripts/*
 
-sed -i '' -e 's/admin_user_val/'$adminuser'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/admin_user_val/'$adminuser'/g' -i $CURRENTDIR/jmx_scripts/*
 
-sed -i '' -e 's/admin_password_val/'$adminpass'/g' $CURRENTDIR/jmx_scripts/*
+sed  -e 's/admin_password_val/'$adminpass'/g' -i $CURRENTDIR/jmx_scripts/*
 
 echo "Common JMX scripts has generated in jmx_scripts !"
 else
