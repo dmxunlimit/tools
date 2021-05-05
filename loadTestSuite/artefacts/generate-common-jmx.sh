@@ -28,80 +28,57 @@ if [ -d "$CURRENTDIR/jmx_scripts" ]; then
     hostname='localhost'
     read -ep "hostname/ip [$hostname]: " input
     hostname=${input:-$hostname}
-    JmxUpdate() hostname $hostname
+    JmxUpdate hostname_val $hostname
 
     port=9443
     read -ep "port [$port]: " input
     port=${input:-$port}
-    JmxUpdate() hostname $hostname
+    JmxUpdate port_val $port
 
-    exit
 
     adminuser='admin'
     read -ep "admin username [$adminuser]: " input
     adminuser=${input:-$adminuser}
+    JmxUpdate admin_user_val $adminuser
 
     adminpass='admin'
     read -ep "admin password [$adminpass]: " input
     adminpass=${input:-$adminpass}
+    cred=$(echo -n $adminuser:$adminpass | base64)
+    JmxUpdate admin_password_val $adminpass
+    JmxUpdate base64AdminCred_val $cred
 
     NoUser=500
     read -ep "number of users [$NoUser]: " input
     NoUser=${input:-$NoUser}
+    JmxUpdate userCount_val $NoUser
 
     NoApps=200
     read -ep "number of apps [$NoApps]: " input
     NoApps=${input:-$NoApps}
+    JmxUpdate sp_apps_val $NoApps
 
     startCounter=1
     read -ep "start counter [$startCounter]: " input
     startCounter=${input:-$startCounter}
+    JmxUpdate startCounter_val $startCounter
 
     concurrency=50
     read -ep "threads [$concurrency]: " input
     concurrency=${input:-$concurrency}
+    JmxUpdate concurrency_val $concurrency
 
     timeToRunInMinutes=30
     read -ep "time to run in minutes [$timeToRunInMinutes]: " input
     timeToRunInMinutes=${input:-$timeToRunInMinutes}
+    timeToRun=$(($timeToRunInMinutes * 60))
+    JmxUpdate portimeToRun_valt_val $timeToRun
 
     rampUpPeriod=10
     read -ep "ramp up time [$rampUpPeriod]: " input
     rampUpPeriod=${input:-$rampUpPeriod}
+    JmxUpdate rampUpPeriod_val $rampUpPeriod
 
-    timeToRun=$(($timeToRunInMinutes * 60))
-
-    cred=$(echo -n $adminuser:$adminpass | base64)
-
-    # for file in $CURRENTDIR/jmx_scripts/*.jmx; do
-
-    #     sed -i.bkp 's/hostname_val/'$hostname'/g' $file
-
-    #     sed -i.bkp 's/port_val/'$port'/g' $file
-
-    #     ###
-    #     sed -i.bkp 's/userCount_val/'$NoUser'/g' $file
-
-    #     sed -i.bkp 's/sp_apps_val/'$NoApps'/g' $file
-
-    #     sed -i.bkp 's/startCounter_val/'$startCounter'/g' $file
-
-    #     ###
-    #     sed -i.bkp 's/timeToRun_val/'$timeToRun'/g' $file
-
-    #     sed -i.bkp 's/concurrency_val/'$concurrency'/g' $file
-
-    #     sed -i.bkp 's/rampUpPeriod_val/'$rampUpPeriod'/g' $file
-
-    #     ##
-    #     sed -i.bkp 's/base64AdminCred_val/'$cred'/g' $file
-
-    #     sed -i.bkp 's/admin_user_val/'$adminuser'/g' $file
-
-    #     sed -i.bkp 's/admin_password_val/'$adminpass'/g' $file
-
-    #     rm -rf $CURRENTDIR/jmx_scripts/*.bkp
-    # done
     echo "Common JMX scripts has generated in jmx_scripts !"
 else
     echo "Unable to get the base jmx scripts !"
