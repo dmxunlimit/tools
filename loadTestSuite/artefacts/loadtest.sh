@@ -37,7 +37,7 @@ while [ $newFiles == 1 ]; do
 
         sleep 1
 
-        sh $WRKDIR/tools/jmeter/bin/jmeter -n -t $FILE -l $RESULTDIR/$RESULTFILE -e -o $RESULTDIR
+        sh $WRKDIR/.artefacts/jmeter/bin/jmeter -n -t $FILE -l $RESULTDIR/$RESULTFILE -e -o $RESULTDIR
 
         cp $FILE $RESULTDIR
         rm -rf $FILE
