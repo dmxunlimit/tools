@@ -68,7 +68,7 @@ if [ -d "$CURRENTDIR/jmx_scripts" ]; then
     read -ep "time to run in minutes [$timeToRunInMinutes]: " input
     timeToRunInMinutes=${input:-$timeToRunInMinutes}
     timeToRun=$(($timeToRunInMinutes * 60))
-    JmxUpdate portimeToRun_valt_val $timeToRun
+    JmxUpdate timeToRun_val $timeToRun
 
     rampUpPeriod=10
     read -ep "ramp up time [$rampUpPeriod]: " input
