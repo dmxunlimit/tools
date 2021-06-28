@@ -1,4 +1,4 @@
-public class OutOfMemoryErrorDemo {
+public class OutOfMemory {
    public static void main(String[] args) throws Exception {
       int dummyArraySize = 15;
       System.out.println("Max JVM memory: " + Runtime.getRuntime().maxMemory());
