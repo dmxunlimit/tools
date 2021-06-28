@@ -3,7 +3,7 @@ public class OutOfMemory {
       int dummyArraySize = 15;
       System.out.println("Max JVM memory: " + Runtime.getRuntime().maxMemory());
       long memoryConsumed = 0;
-      try {
+
          long[] memoryAllocated = null;
          for(int loop = 0; loop < Integer.MAX_VALUE; loop++) {
             memoryAllocated = new long[dummyArraySize];
@@ -11,12 +11,7 @@ public class OutOfMemory {
             memoryConsumed += dummyArraySize * Long.SIZE;
             System.out.println("Memory Consumed till now: " + memoryConsumed);
             dummyArraySize *= dummyArraySize * 2;
-            Thread.sleep(500);
+            Thread.sleep(1000);
          }
-      } catch (OutOfMemoryError outofMemory) {
-         System.out.println("Catching out of memory error");
-         //Log the information, so that we can generate the statistics
-         throw outofMemory;
-      }
    }
 }
