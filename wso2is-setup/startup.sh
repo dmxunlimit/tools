@@ -538,5 +538,3 @@ esac
 printf "\n#### Starting up "$isVersion" with database "$dbType" ####\n\n"
 
 sh $script_dir/$isVersion/bin/wso2server.sh $startupPrams
-
-$SHELL
