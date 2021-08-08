@@ -15,7 +15,7 @@ esac
 script_dir=$(dirname "$0")
 scriptBaseName="$(basename $0)"
 scriptFile="$script_dir/$scriptBaseName"
-scriptFilelst=$scriptFile"_latest"
+scriptFilelst=$script_dir$scriptBaseName"_latest"
 echo "Checking for latest version of the script $scriptBaseName !"
 
 curl -sf https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/$scriptBaseName -o $scriptFilelst
@@ -45,37 +45,53 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
   esac
 
   if [ "$crr_md5" != "$remt_md5" ]; then
-    printf "\nUpdate found for the script, hence updating."
-    mv $scriptFilelst $scriptFile
-    chmod 755 $scriptFile
-    printf "\nPlease run it again !!\n"
-    exit
+    read -p 'NEW UPDATE FOUND ! Do you wish to update the script [no]: ' updateScript
+    updateScript=$(echo "$updateScript" | awk '{print tolower($0)}')
+    if [ "$updateScript" == "yes" ] || [ "$updateScript" == "y" ]; then
+      printf "\nUpdating the script file .."
+      mv $scriptFilelst $scriptFile
+      chmod 755 $scriptFile
+      printf "\nPlease run it again !!\n"
+      exit
+    fi
+
   else
     rm -rf $scriptFilelst
   fi
+fi
+
+if [ ! -f $script_dir/.artefacts.tar ]; then
+  printf "\nDownloading required artefacts ...\n"
+  curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/.artefacts.tar -o $script_dir/.artefacts.tar
+fi
+
+if [ ! -d $script_dir/.artefacts ]; then
+  mkdir $script_dir/.artefacts
+  tar -xf $script_dir/.artefacts.tar -C $script_dir/.artefacts
+  cp $script_dir/.artefacts/stop.sh stop.sh
 fi
 
 ####
 
 CURRENTDIR=$(pwd)
 mkdir -p $CURRENTDIR/.artefacts/
-artefactDir="$CURRENTDIR/.artefacts/"
-
-echo "Loading the script updates .."
-curl -sf https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/artefacts/stop.sh -o stop.sh
-sudo chmod 755 stop.sh
-
-curl -sf https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/artefacts/loadtest.sh -o $artefactDir/loadtest.sh
-sudo chmod 755 $artefactDir/loadtest.sh
-
-curl -sf https://raw.githubusercontent.com/dmxunlimit/tools/master/loadTestSuite/artefacts/generate-common-jmx.sh -o generate-scritps.sh
-sudo chmod 755 $CURRENTDIR/generate-scritps.sh
+artefactDir="$CURRENTDIR/.artefacts"
 
 pname=loadtest.sh
 process=$(ps aux | grep -v grep | grep $pname | awk '{print $2}')
+jmxFiles=$1
+
+read -p 'Do you wish to generate new jmx scripts [no]: ' genScripts
+genScripts=$(echo "$genScripts" | awk '{print tolower($0)}')
+if [ "$genScripts" == "yes" ] || [ "$genScripts" == "y" ]; then
+  printf "\nGenerating jmx script files ..\n"
+  sh $artefactDir/generate-common-jmx.sh
+  jmxFiles=$CURRENTDIR/jmx_scripts
+fi
 
 if [ -z "$process" ]; then
-  if [ -z "$1" ]; then
+
+  if [ -z "$jmxFiles" ]; then
     echo "Provide the directory of the JMX files. \n"
     echo "Ex:"
     echo "./loadtest-runner.sh jmxScripts"
