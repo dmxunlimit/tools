@@ -78,11 +78,7 @@ if [ ! -d $script_dir/artefacts ]; then
     tar -xf $script_dir/.artefacts.tar -C $script_dir/artefacts
 fi
 
-
 ####
-
-# cd $script_dir
-# script_dir=$(pwd)
 
 is_versions_arr=(wso2is-5.0.0 wso2is-5.1.0 wso2is-5.2.0 wso2is-5.3.0 wso2is-5.4.0 wso2is-5.4.1 wso2is-5.5.0 wso2is-5.6.0 wso2is-5.7.0 wso2is-5.8.0 wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
 db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
@@ -144,6 +140,28 @@ dockerStart() {
     fi
 }
 
+applyConfig() {
+
+    if [ $isVersionIndex -lt $toml_ver_index ]; then
+        configFile="$script_dir/"$isVersion"/repository/conf/datasources/master-datasources.xml"
+        cp -r "$script_dir/artefacts/xml-based/repository/" "$script_dir/"$isVersion"/repository/"
+    else
+        configFile="$script_dir/"$isVersion"/repository/conf/deployment.toml"
+        cp "$script_dir/artefacts/toml-based/repository/conf/deployment.toml" $configFile
+        if [ $isVersionIndex -lt 12 ]; then
+            sed -i.bkp 's/'database_unique_id'/'database'/g' $configFile
+        fi
+    fi
+
+    sed -i.bkp 's/'db_url'/'$db_url'/g' $configFile
+    sed -i.bkp 's/'db_username'/'$db_username'/g' $configFile
+    sed -i.bkp 's/'db_password'/'$db_password'/g' $configFile
+    sed -i.bkp 's/'db_driver'/'$db_driver'/g' $configFile
+    sed -i.bkp "s/db_validation_query/$db_validation_query/g" $configFile
+    sed -i.bkp "s/db_option_param/$db_option_param/g" $configFile
+
+}
+
 mysqlFunc() {
 
     docker_ps="cs-mysql-57"
@@ -164,19 +182,7 @@ mysqlFunc() {
     db_validation_query="SELECT 1"
     db_option_param=''
 
-    if [ $isVersionIndex -lt $toml_ver_index ]; then
-        cp -r "$script_dir/artefacts/xml-based/repository/" "$script_dir/"$isVersion"/repository/"
-    else
-        configFile="$script_dir/"$isVersion"/repository/conf/deployment.toml"
-        cp "$script_dir/artefacts/toml-based/repository/conf/deployment.toml" $configFile
-    fi
-
-    sed -i.bkp 's/'db_url'/'$db_url'/g' $configFile
-    sed -i.bkp 's/'db_username'/'$db_username'/g' $configFile
-    sed -i.bkp 's/'db_password'/'$db_password'/g' $configFile
-    sed -i.bkp 's/'db_driver'/'$db_driver'/g' $configFile
-    sed -i.bkp "s/db_validation_query/$db_validation_query/g" $configFile
-    sed -i.bkp "s/db_option_param/$db_option_param/g" $configFile
+    applyConfig
 
     docker exec -it $dockerps /bin/sh -c "echo '[client]\nuser=$db_username\npassword=$db_password'>/home/cred.cnf"
 
@@ -233,20 +239,7 @@ oracleFunc() {
     db_validation_query="SELECT 1 FROM DUAL"
     db_option_param=""
 
-    if [ $isVersionIndex -lt $toml_ver_index ]; then
-        configFile="$script_dir/"$isVersion"/repository/conf/datasources/master-datasources.xml"
-        cp -r "$script_dir/artefacts/xml-based/repository/" "$script_dir/"$isVersion"/repository/"
-    else
-        configFile="$script_dir/"$isVersion"/repository/conf/deployment.toml"
-        cp "$script_dir/artefacts/toml-based/repository/conf/deployment.toml" $configFile
-    fi
-
-    sed -i.bkp 's/'db_url'/'$db_url'/g' $configFile
-    sed -i.bkp 's/'db_username'/'$db_username'/g' $configFile
-    sed -i.bkp 's/'db_password'/'$db_password'/g' $configFile
-    sed -i.bkp 's/'db_driver'/'$db_driver'/g' $configFile
-    sed -i.bkp "s/db_validation_query/$db_validation_query/g" $configFile
-    sed -i.bkp "s/db_option_param/$db_option_param/g" $configFile
+    applyConfig
 
     docker exec -it -u oracle $dockerps /bin/sh -c "echo 'CREATE USER $db_schema IDENTIFIED BY $db_schema;
     GRANT CONNECT TO $db_schema;
@@ -305,20 +298,7 @@ postgresqlFunc() {
     db_option_param=""
     db_validation_query="SELECT 1;COMMIT"
 
-    if [ $isVersionIndex -lt $toml_ver_index ]; then
-        configFile="$script_dir/"$isVersion"/repository/conf/datasources/master-datasources.xml"
-        cp -r "$script_dir/artefacts/xml-based/repository/" "$script_dir/"$isVersion"/repository/"
-    else
-        configFile="$script_dir/"$isVersion"/repository/conf/deployment.toml"
-        cp "$script_dir/artefacts/toml-based/repository/conf/deployment.toml" $configFile
-    fi
-
-    sed -i.bkp 's/'db_url'/'$db_url'/g' $configFile
-    sed -i.bkp 's/'db_username'/'$db_username'/g' $configFile
-    sed -i.bkp 's/'db_password'/'$db_password'/g' $configFile
-    sed -i.bkp 's/'db_driver'/'$db_driver'/g' $configFile
-    sed -i.bkp "s/db_validation_query/$db_validation_query/g" $configFile
-    sed -i.bkp "s/db_option_param/$db_option_param/g" $configFile
+    applyConfig
 
     db_status=$(docker exec -it $dockerps psql -U postgres -c "CREATE DATABASE $db_schema;")
 
@@ -369,20 +349,7 @@ mssqlFunc() {
     db_option_param=""
     db_validation_query="SELECT 1"
 
-    if [ $isVersionIndex -lt $toml_ver_index ]; then
-        configFile="$script_dir/"$isVersion"/repository/conf/datasources/master-datasources.xml"
-        cp -r "$script_dir/artefacts/xml-based/repository/" "$script_dir/"$isVersion"/repository/"
-    else
-        configFile="$script_dir/"$isVersion"/repository/conf/deployment.toml"
-        cp "$script_dir/artefacts/toml-based/repository/conf/deployment.toml" $configFile
-    fi
-
-    sed -i.bkp 's/'db_url'/'$db_url'/g' $configFile
-    sed -i.bkp 's/'db_username'/'$db_username'/g' $configFile
-    sed -i.bkp 's/'db_password'/'$db_password'/g' $configFile
-    sed -i.bkp 's/'db_driver'/'$db_driver'/g' $configFile
-    sed -i.bkp "s/db_validation_query/$db_validation_query/g" $configFile
-    sed -i.bkp "s/db_option_param/$db_option_param/g" $configFile
+    applyConfig
 
     db_status=$(docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -Q "CREATE DATABASE $db_schema")
 
@@ -427,23 +394,7 @@ h2Func() {
     db_validation_query="SELECT 1"
     db_option_param=""
 
-    if [ $isVersionIndex -lt $toml_ver_index ]; then
-        configFile="$script_dir/"$isVersion"/repository/conf/datasources/master-datasources.xml"
-        cp -r "$script_dir/artefacts/xml-based/repository/" "$script_dir/"$isVersion"/repository/"
-    else
-        configFile="$script_dir/"$isVersion"/repository/conf/deployment.toml"
-        cp "$script_dir/artefacts/toml-based/repository/conf/deployment.toml" $configFile
-        if [ $isVersionIndex -lt 12 ]; then
-            sed -i.bkp 's/'database_unique_id'/'database'/g' $configFile
-        fi
-    fi
-
-    sed -i.bkp 's/'db_url'/'$db_url'/g' $configFile
-    sed -i.bkp 's/'db_username'/'$db_username'/g' $configFile
-    sed -i.bkp 's/'db_password'/'$db_password'/g' $configFile
-    sed -i.bkp 's/'db_driver'/'$db_driver'/g' $configFile
-    sed -i.bkp "s/db_validation_query/$db_validation_query/g" $configFile
-    sed -i.bkp "s/db_option_param/$db_option_param/g" $configFile
+    applyConfig
 
     db_status=$(ls $script_dir/$isVersion/repository/database | grep $db_schema | wc -l)
 
