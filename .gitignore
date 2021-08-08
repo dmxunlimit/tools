@@ -6499,3 +6499,14 @@ loadTestSuite copy/results/OAuth_Password_Grant_Token_Revocation_2021-07-24:03-4
 loadTestSuite copy/results/OAuth_Password_Grant_Token_Revocation_2021-07-24:03-40-42/sbadmin2-1.0.7/less/mixins.less
 loadTestSuite copy/results/OAuth_Password_Grant_Token_Revocation_2021-07-24:03-40-42/sbadmin2-1.0.7/less/sb-admin-2.less
 loadTestSuite copy/results/OAuth_Password_Grant_Token_Revocation_2021-07-24:03-40-42/sbadmin2-1.0.7/less/variables.less
+wso2is-setup/startup.sh_latest
+wso2is-setup/artefacts/db-client/h2-1.4.200.jar
+wso2is-setup/artefacts/drivers/repository/components/lib/mssql-jdbc-6.2.2.jre8.jar
+wso2is-setup/artefacts/drivers/repository/components/lib/mysql-connector-java-5.1.44-bin.jar
+wso2is-setup/artefacts/drivers/repository/components/lib/ojdbc7.jar
+wso2is-setup/artefacts/drivers/repository/components/lib/postgresql-42.2.2.jar
+wso2is-setup/artefacts/toml-based/repository/conf/deployment.toml
+wso2is-setup/artefacts/u2-script/wso2update_darwin
+wso2is-setup/artefacts/u2-script/wso2update_linux
+wso2is-setup/artefacts/xml-based/repository/conf/user-mgt.xml
+wso2is-setup/artefacts/xml-based/repository/conf/datasources/master-datasources.xml
