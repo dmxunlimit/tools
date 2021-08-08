@@ -1,0 +1,38 @@
+[server]
+hostname = "localhost"
+node_ip = "127.0.0.1"
+base_path = "https://$ref{server.hostname}:${carbon.management.port}"
+
+[super_admin]
+username = "admin"
+password = "admin"
+create_admin_account = true
+
+[user_store]
+type = "database_unique_id"
+
+[realm_manager]
+data_source = "WSO2USER_DB"
+
+[database.user]
+url = "db_url"
+username = "db_username"
+password = "db_password"
+driver = "db_driver"
+
+[database.identity_db]
+url = "db_url"
+username = "db_username"
+password = "db_password"
+driver = "db_driver"
+
+[database.shared_db]
+url = "db_url"
+username = "db_username"
+password = "db_password"
+driver = "db_driver"
+
+[keystore.primary]
+file_name = "wso2carbon.jks"
+password = "wso2carbon"
+
