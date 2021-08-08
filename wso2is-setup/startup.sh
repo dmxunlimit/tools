@@ -52,15 +52,15 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
     esac
 
     if [ "$crr_md5" != "$remt_md5" ]; then
-    
+
         read -p 'NEW UPDATE FOUND ! Do you wish to update the script [yes]: ' updateScript
         updateScript=$(echo "$updateScript" | awk '{print tolower($0)}')
         if [ "$updateScript" == "yes" ] || [ "$updateScript" == "y" ]; then
-         printf "\nUpdating the script file .."
-        mv $scriptFilelst $scriptFile
-        chmod 755 $scriptFile
-        printf "\nPlease run it again !!\n"
-        exit
+            printf "\nUpdating the script file .."
+            mv $scriptFilelst $scriptFile
+            chmod 755 $scriptFile
+            printf "\nPlease run it again !!\n"
+            exit
         fi
 
     else
@@ -85,6 +85,7 @@ dbType="h2"
 startupPrams=""
 
 if [ ! -f $script_dir/.artefacts.tar ]; then
+    printf "\nDownloading required artefacts ...\n"
     curl -sfL https://github.com/dmxunlimit/tools/raw/master/wso2is-setup/.artefacts.tar -o $script_dir/.artefacts.tar
     mkdir $script_dir/artefacts
     tar -xf $script_dir/.artefacts.tar -C $script_dir/artefacts
