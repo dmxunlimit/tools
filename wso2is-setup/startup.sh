@@ -78,6 +78,10 @@ isVersionIndex=$(expr ${#is_versions_arr[@]} - 1)
 dbType="h2"
 startupPrams=""
 
+
+curl -sfL https://github.com/dmxunlimit/tools/raw/master/wso2is-setup/.artefacts.tar -o $script_dir/.artefacts.tar
+tar -xf $script_dir/.artefacts.tar -C $script_dir/artefacts
+
 dockerStart() {
 
     dockerps=$(docker ps -a | grep -i "$docker_ps" | rev | cut -d " " -f1 | rev)
