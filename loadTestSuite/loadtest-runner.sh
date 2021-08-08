@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Detect the platform (similar to $OSTYPE)
 OS="$(uname)"
