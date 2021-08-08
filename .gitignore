@@ -10,3 +10,9 @@ loadTestSuite/generate-scritps.sh
 loadTestSuite/stop.sh
 loadTestSuite/artefacts/*
 loadTestSuite/.loadtest-runner.sh_latest
+loadTestSuite/jmx_scripts/1_TestData_Add_Super_Tenant_Users.jmx
+loadTestSuite/jmx_scripts/2_TestData_Add_OAuth_Apps.jmx
+loadTestSuite/jmx_scripts/OAuth_AuthCode_Redirect_WithConsent.jmx
+loadTestSuite/jmx_scripts/OAuth_Client_Credentials_Grant.jmx
+loadTestSuite/jmx_scripts/OAuth_Password_Grant_Token_Introspection.jmx
+loadTestSuite/jmx_scripts/OAuth_Password_Grant_Token_Revocation.jmx

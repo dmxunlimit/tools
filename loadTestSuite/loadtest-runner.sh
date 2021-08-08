@@ -84,7 +84,7 @@ jmxFiles=$1
 read -p 'Do you wish to generate new jmx scripts [no]: ' genScripts
 genScripts=$(echo "$genScripts" | awk '{print tolower($0)}')
 if [ "$genScripts" == "yes" ] || [ "$genScripts" == "y" ]; then
-  printf "\nGenerating jmx script files ..\n"
+  printf "\nGenerating jmx script files !\n"
   sh $artefactDir/generate-common-jmx.sh
   jmxFiles=$CURRENTDIR/jmx_scripts
 fi
