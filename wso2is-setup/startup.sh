@@ -83,7 +83,6 @@ fi
 
 cd $script_dir
 script_dir=$(pwd)
-$SHELL
 
 is_versions_arr=(wso2is-5.0.0 wso2is-5.1.0 wso2is-5.2.0 wso2is-5.3.0 wso2is-5.4.0 wso2is-5.4.1 wso2is-5.5.0 wso2is-5.6.0 wso2is-5.7.0 wso2is-5.8.0 wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
 db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
@@ -539,3 +538,5 @@ esac
 printf "\n#### Starting up "$isVersion" with database "$dbType" ####\n\n"
 
 sh $script_dir/$isVersion/bin/wso2server.sh $startupPrams
+
+$SHELL

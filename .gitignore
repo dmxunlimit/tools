@@ -16,3 +16,4 @@ loadTestSuite/jmx_scripts/OAuth_AuthCode_Redirect_WithConsent.jmx
 loadTestSuite/jmx_scripts/OAuth_Client_Credentials_Grant.jmx
 loadTestSuite/jmx_scripts/OAuth_Password_Grant_Token_Introspection.jmx
 loadTestSuite/jmx_scripts/OAuth_Password_Grant_Token_Revocation.jmx
+wso2is-setupstartup.sh_latest
