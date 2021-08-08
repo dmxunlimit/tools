@@ -83,6 +83,7 @@ fi
 
 cd $script_dir
 script_dir=$(pwd)
+exit
 
 is_versions_arr=(wso2is-5.0.0 wso2is-5.1.0 wso2is-5.2.0 wso2is-5.3.0 wso2is-5.4.0 wso2is-5.4.1 wso2is-5.5.0 wso2is-5.6.0 wso2is-5.7.0 wso2is-5.8.0 wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
 db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
@@ -486,14 +487,13 @@ isVersionIndex=${input:-$isVersionIndex}
 echo "Selected IS version : "${is_versions_arr[$isVersionIndex]}
 isVersion=${is_versions_arr[$isVersionIndex]}
 
-echo "$script_dir/$isVersion"
 if [ ! -d "$script_dir/$isVersion" ]; then
     echo "$isVersion not exists in the location of $script_dir/$isVersion"
     exit
 fi
 
-cp -r "$script_dir/artefacts/drivers/repository/" "$script_dir/"$isVersion"/repository/"
-cd "$script_dir/$isVersion"
+cp -rf "$script_dir/artefacts/drivers/repository/*" "$script_dir/"$isVersion"/repository/"
+# cd "$script_dir/$isVersion"
 
 if [ "$isVersionIndex" -gt "$update2_index" ]; then
     read -p 'Do you wish to update the product [no]: ' updateProd
