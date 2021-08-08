@@ -81,8 +81,8 @@ fi
 
 ####
 
-cd $script_dir
-script_dir=$(pwd)
+# cd $script_dir
+# script_dir=$(pwd)
 
 is_versions_arr=(wso2is-5.0.0 wso2is-5.1.0 wso2is-5.2.0 wso2is-5.3.0 wso2is-5.4.0 wso2is-5.4.1 wso2is-5.5.0 wso2is-5.6.0 wso2is-5.7.0 wso2is-5.8.0 wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
 db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
@@ -491,7 +491,7 @@ if [ ! -d "$script_dir/$isVersion" ]; then
     exit
 fi
 
-cp -rf "$script_dir/artefacts/drivers/repository/*" "$script_dir/"$isVersion"/repository/"
+cp -rf "$script_dir/artefacts/drivers/repository/components/lib/*" "$script_dir/"$isVersion"/repository/components/lib/"
 # cd "$script_dir/$isVersion"
 
 if [ "$isVersionIndex" -gt "$update2_index" ]; then
@@ -538,5 +538,3 @@ esac
 printf "\n#### Starting up "$isVersion" with database "$dbType" ####\n\n"
 
 sh $script_dir/$isVersion/bin/wso2server.sh $startupPrams
-
-$SHELL
