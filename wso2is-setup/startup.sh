@@ -491,7 +491,7 @@ if [ ! -d "$script_dir/$isVersion" ]; then
     exit
 fi
 
-cp -rf "$script_dir/artefacts/drivers/repository/components/lib/" "$script_dir/"$isVersion"/repository/components/lib/"
+cp -rf "$script_dir/artefacts/drivers/repository/components" "$script_dir/"$isVersion"/repository/"
 # cd "$script_dir/$isVersion"
 
 if [ "$isVersionIndex" -gt "$update2_index" ]; then
