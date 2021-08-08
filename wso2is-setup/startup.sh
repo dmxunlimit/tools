@@ -17,7 +17,7 @@ esac
 script_dir=$(dirname "$0")
 scriptBaseName="$(basename $0)"
 scriptFile="$script_dir/$scriptBaseName"
-scriptFilelst=$scriptFile"_latest"
+scriptFilelst=$script_dir$scriptBaseName"_latest"
 echo "Checking for latest version of the script $scriptBaseName !"
 
 curl -sf https://raw.githubusercontent.com/dmxunlimit/tools/master/wso2is-setup/$scriptBaseName -o $scriptFilelst
@@ -487,6 +487,7 @@ isVersionIndex=${input:-$isVersionIndex}
 echo "Selected IS version : "${is_versions_arr[$isVersionIndex]}
 isVersion=${is_versions_arr[$isVersionIndex]}
 
+echo "$script_dir/$isVersion"
 if [ ! -d "$script_dir/$isVersion" ]; then
     echo "$isVersion not exists in the location of $script_dir/$isVersion"
     exit
