@@ -20,7 +20,7 @@ scriptFile="$script_dir/$scriptBaseName"
 scriptFilelst=$scriptFile"_latest"
 echo "Checking for latest version of the script $scriptBaseName !"
 
-curl -sf https://raw.githubusercontent.com/dmxunlimit/tools/master/git-tools/$scriptBaseName -o $scriptFilelst
+curl -sf https://raw.githubusercontent.com/dmxunlimit/tools/master/wso2is-setup/$scriptBaseName -o $scriptFilelst
 
 if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
     case $OS in
