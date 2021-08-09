@@ -92,10 +92,10 @@ fi
 if [ -z "$process" ]; then
 
   if [ -z "$jmxFiles" ]; then
-    echo "Provide the directory of the JMX files. \n"
+    printf "Provide the directory of the JMX files. \n"
     echo "Ex:"
     echo "./loadtest-runner.sh jmxScripts"
-    prinf "\n*This also supports continues multi Directory/File execution based on the order of the Directory/file names"
+    printf "\n*This also supports continues multi Directory/File execution based on the order of the Directory/file names\n"
     exit 1
   fi
 
