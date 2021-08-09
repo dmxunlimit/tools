@@ -102,7 +102,7 @@ if [ -z "$process" ]; then
   if [ ! -d "$artefactDir/jmeter" ]; then
 
     if [ ! -f $artefactDir/*jmeter* ]; then
-      echo "\nDownloading Jmeter ..."
+      printf "\nDownloading Jmeter ..."
       wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.4.1.tgz -q --show-progress -P $artefactDir/
 
     fi
@@ -115,7 +115,7 @@ if [ -z "$process" ]; then
   if [ ! -n "$JAVA_HOME" ]; then
     if [ ! -d "$artefactDir/java" ]; then
       if [ ! -f $artefactDir/*jre* ]; then
-        echo "\nDownloading JAVA ..."
+        printf "\nDownloading JAVA ..."
         wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -q --show-progress -P $artefactDir/
       fi
 
@@ -136,8 +136,8 @@ if [ -z "$process" ]; then
   sleep 1
 
   echo -e "\n" >>nohup.out
-  nohup bash $artefactDir/loadtest.sh $CURRENTDIR $1 &
-  echo "\nBackgroud job created ./loadtest.sh !" && tail -n 0 -f nohup.out
+  nohup sh $artefactDir/loadtest.sh $CURRENTDIR $1 &
+  printf "\nBackgroud job created ./loadtest.sh !" && tail -n 0 -f nohup.out
 
 else
   printf "Already running process found for $pname \n"
