@@ -6,7 +6,7 @@
 # Maintain the order of the versions
 db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
 tomlSupportArr=(wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
-U2SupportFrom="wso2is-5.2.0"
+# U2SupportFrom="wso2is-5.2.0"
 
 # To support arguments passing to the script. ex : ./startup "--debug 5005"
 startupPrams=$1
@@ -468,13 +468,11 @@ updateProduct() {
     cd $script_dir
 }
 
-is_versions_arr=()
-
 for i in $(find $script_dir -mindepth 1 -maxdepth 1 -type d -name "wso2*" -print0 | xargs -0 basename -a | sort -V); do
     is_versions_arr+=("$i")
 done
 
-if [ !${is_versions_arr[@]} ]; then
+if [ ${#is_versions_arr[@]} -eq 0 ]; then
     printf "\nNO WSO2 Server directories available in the path "$script_dir"\n\n"
     exit
 fi
@@ -487,9 +485,9 @@ printf "\nAvailable WSO2 Versions\n"
 for index in "${!is_versions_arr[@]}"; do
     echo "[$index]  ${is_versions_arr[$index]}"
 
-    if [ "${is_versions_arr[$index]}" == "$U2SupportFrom" ]; then
-        update2_index=$index
-    fi
+    # if [ "${is_versions_arr[$index]}" == "$U2SupportFrom" ]; then
+    #     update2_index=$index
+    # fi
 
 done
 
