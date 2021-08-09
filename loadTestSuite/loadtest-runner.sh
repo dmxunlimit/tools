@@ -60,15 +60,11 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
   fi
 fi
 
+curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/.artefacts.tar -o $script_dir/.artefacts.tar
 if [ ! -f $script_dir/.artefacts.tar ]; then
-  printf "\nDownloading required artefacts ...\n"
-  curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/.artefacts.tar -o $script_dir/.artefacts.tar
-fi
-
-if [ ! -d $script_dir/.artefacts ]; then
-  mkdir $script_dir/.artefacts
+  mkdir -p $script_dir/.artefacts
   tar -xf $script_dir/.artefacts.tar -C $script_dir/.artefacts
-  cp $script_dir/.artefacts/stop.sh stop.sh
+  cp -f $script_dir/.artefacts/stop.sh stop.sh
 fi
 
 ####
@@ -95,7 +91,7 @@ if [ -z "$process" ]; then
     printf "Provide the directory of the JMX files. \n"
     echo "Ex:"
     echo "./loadtest-runner.sh jmxScripts"
-    printf "\n*This also supports continues multi Directory/File execution based on the order of the Directory/file names\n"
+    printf "*This also supports continues multi Directory/File execution based on the order of the Directory/file names\n\n"
     exit 1
   fi
 
