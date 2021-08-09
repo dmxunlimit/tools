@@ -26,3 +26,9 @@ download the script.
 
 run the script.
 `./startup.sh`
+
+
+
+https://user-images.githubusercontent.com/20121821/128667869-d874ae92-6a35-4674-8809-dbca08611631.mp4
+
+
