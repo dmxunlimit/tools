@@ -7,9 +7,9 @@
 <br/> PostgreSQL-10
 <br/> MSSQL-2017
 
-## Prerequisites
+### Prerequisites
 
-1. Respective WSO2IS pack has to available in the same path as startup script.
+1. Respective WSO2IS pack has to be available in the same path as startup script.
 
 ex
 
@@ -19,16 +19,12 @@ ex
 3. Docker runtime should be installed in the system,
 
 
-## How to run
+### How to run
 
-download the script.
+Download the script.
 `curl -L https://git.io/JR4vo -o startup.sh && chmod 755 startup.sh`
 
-run the script.
+Run the script.
 `./startup.sh`
 
-
-
 https://user-images.githubusercontent.com/20121821/128667869-d874ae92-6a35-4674-8809-dbca08611631.mp4
-
-
