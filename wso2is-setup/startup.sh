@@ -100,7 +100,38 @@ fi
 
 ################
 
-dockerStart() {
+IsDockerReady() {
+
+    dcLog=""
+    sleep 5
+    sek=0
+    echo ""
+
+    while true; do
+        sleep 2
+
+        dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
+
+        if [[ "$dbStartupState" == *"$dockerReadyLog"* ]]; then
+            if ["$dcLog" != "$dbStartupState" ]; then
+                echo $dbStartupState
+            fi
+            break
+        else
+            tmp=$(docker logs -n1 $dockerps)
+            if [ ! -z "$tmp" ] && [ "$dcLog" != "$tmp" ]; then
+                dcLog=$tmp
+                echo "$dcLog                               "
+            else
+                printf " One moment please $sek \r"
+                sek=$(($sek + 1))
+            fi
+        fi
+
+    done
+}
+
+DockerStart() {
 
     dockerps=$(docker ps -a | grep -i "$docker_ps" | rev | cut -d " " -f1 | rev)
     dockerDemon=$(echo $dockerps | grep -i "Error response from daemon")
@@ -127,42 +158,18 @@ dockerStart() {
         if [ ! -z $dockerps ]; then
             printf "\nContainer found, Hence starting "
             docker start $dockerps
-            printf "Waiting for container to complete startup ...\n"
-            sleep 5
-            while true; do
-                sleep 2
-                dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
-
-                if [[ "$dbStartupState" == *"$dockerReadyLog"* ]]; then
-                    echo $dbStartupState
-                    break
-                else
-                    echo $(docker logs -n1 $dockerps)
-                fi
-
-            done
+            printf "Waiting for container to complete startup, This might take a while !!\n"
+            IsDockerReady
         else
-            printf "\nWaiting for container to complete startup ...\n"
+            printf "\nWaiting for container to complete startup, This might take a while !!\n"
             docker $docker_run
             dockerps=$(docker ps -a | grep -i "$docker_ps" | rev | cut -d " " -f1 | rev)
-            sleep 5
-            while true; do
-                sleep 2
-                dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
-
-                if [[ "$dbStartupState" == *"$dockerReadyLog"* ]]; then
-                    echo $dbStartupState
-                    break
-                else
-                    echo $(docker logs -n1 $dockerps)
-                fi
-
-            done
+            IsDockerReady
         fi
     fi
 }
 
-applyConfig() {
+ApplyConfig() {
 
     isTOMLsupported=false
 
@@ -179,7 +186,7 @@ applyConfig() {
         uniqueDbIdVersion=$(expr ${toml_ver_index} + 1)
     fi
 
-    if [ ! $isTOMLsupported ]; then
+    if [ "$isTOMLsupported" = false ]; then
         configFile="$script_dir/"$isVersion"/repository/conf/datasources/master-datasources.xml"
         cp -r "$script_dir/artefacts/xml-based/repository/" "$script_dir/"$isVersion"/repository/"
     else
@@ -199,7 +206,7 @@ applyConfig() {
 
 }
 
-createDB() {
+CreateDB() {
 
     db_status=$(eval "$createdbCMD")
 
@@ -208,7 +215,7 @@ createDB() {
         for i in $(find $script_dir/$isVersion/dbscripts -name "$dbTypeSqlFile"); do
             echo "Processing File  "$i
             docker cp $i $dockerps:$dockerScriptPath
-            tmp=$(eval "$createSchemaFrmFileCMD")
+            echo $(eval "$createSchemaFrmFileCMD") >>startup.log
         done
     else
         echo ""
@@ -216,29 +223,29 @@ createDB() {
         db_clean=$(echo "$db_clean" | awk '{print tolower($0)}')
         if [ "$db_clean" == "yes" ] || [ "$db_clean" == "y" ]; then
             echo "Dropping exsiting schema :"$db_schema
-            echo $(eval "$dropDBCMD")
+            echo $(eval "$dropDBCMD") >>$script_dir/startup.log
             sleep 2
-            echo $(eval "$createdbCMD")
+            echo $(eval "$createdbCMD") >>$script_dir/startup.log
             sleep 2
             for i in $(find $script_dir/$isVersion/dbscripts -name "$dbTypeSqlFile"); do
                 echo "Processing File  "$i
                 docker cp $i $dockerps:$dockerScriptPath
-                tmp=$(eval "$createSchemaFrmFileCMD")
+                echo $(eval "$createSchemaFrmFileCMD") >>$script_dir/startup.log
             done
         fi
 
     fi
 }
 
-mysqlFunc() {
+MySqlFunc() {
 
     docker_ps="cs-mysql-57"
     db_port=3306
-    dockerReadyTailCount="-n2"
+    dockerReadyTailCount="-n4"
     dockerReadyLog="ready for connections"
     docker_run="run -d --name $docker_ps -p $db_port:$db_port -e MYSQL_ROOT_PASSWORD=root mysql:5.7.34"
 
-    dockerStart
+    DockerStart
 
     db_schema=$(echo $isVersion | sed -e 's/-/_/g' | sed -e 's/\.//g')
     echo ""
@@ -251,9 +258,9 @@ mysqlFunc() {
     db_password="root"
     db_driver="com.mysql.jdbc.Driver"
     db_validation_query="SELECT 1"
-    db_option_param=''
+    db_option_param='ALLOW_INVALID_DATES'
 
-    applyConfig
+    ApplyConfig
 
     docker exec -it $dockerps /bin/sh -c "echo '[client]\nuser=$db_username\npassword=$db_password'>/home/cred.cnf"
 
@@ -269,18 +276,18 @@ mysqlFunc() {
     createSchemaFrmFileCMD="docker exec -it $dockerps /bin/sh -c \"mysql --defaults-extra-file=/home/cred.cnf $db_schema < $dockerScriptPath\""
     dropDBCMD="docker exec -it $dockerps /bin/sh -c \"mysql --defaults-extra-file=/home/cred.cnf -e 'drop database $db_schema;'\""
 
-    createDB
+    CreateDB
 }
 
-oracleFunc() {
+OracleFunc() {
 
     docker_ps="cs-oracle-12c"
     db_port=1521
-    dockerReadyTailCount="-n2"
+    dockerReadyTailCount="-n4"
     dockerReadyLog="we are ready to go"
     docker_run="run -d --name $docker_ps --privileged -v $script_dir/artefacts/oradata:/u01/app/oracle -p $db_port:$db_port absolutapps/oracle-12c-ee"
 
-    dockerStart
+    DockerStart
 
     db_schema=$(echo $isVersion | sed -e 's/-/_/g' | sed -e 's/\.//g')
     echo ""
@@ -295,7 +302,7 @@ oracleFunc() {
     db_validation_query="SELECT 1 FROM DUAL"
     db_option_param=""
 
-    applyConfig
+    ApplyConfig
 
     docker exec -it -u oracle $dockerps /bin/sh -c "echo 'CREATE USER $db_schema IDENTIFIED BY $db_schema;
     GRANT CONNECT TO $db_schema;
@@ -311,19 +318,19 @@ oracleFunc() {
     createSchemaFrmFileCMD="docker exec -it -u oracle $dockerps /bin/sh -c \"echo @/home/oracle/oracle.sql | sqlplus -s $db_schema/$db_schema\""
     dropDBCMD="docker exec -it --user oracle $dockerps /bin/sh -c \"sqlplus -s / as sysdba <<< 'drop user $oracle_schema cascade;'\""
 
-    createDB
+    CreateDB
 
 }
 
-postgresqlFunc() {
+PostgreSqlFunc() {
 
     docker_ps="cs-postgre-10"
     db_port=5432
-    dockerReadyTailCount="-n2"
+    dockerReadyTailCount="-n4"
     dockerReadyLog="ready to accept connections"
     docker_run="run -d --name $docker_ps -p $db_port:$db_port -e POSTGRES_PASSWORD=postgres postgres:10 -c shared_buffers=1024MB -c max_connections=400"
 
-    dockerStart
+    DockerStart
 
     db_schema=$(echo $isVersion | sed -e 's/-/_/g' | sed -e 's/\.//g')
     echo ""
@@ -338,7 +345,7 @@ postgresqlFunc() {
     db_option_param=""
     db_validation_query="SELECT 1;COMMIT"
 
-    applyConfig
+    ApplyConfig
 
     createdbCMD="docker exec -it $dockerps psql -U postgres -c \"CREATE DATABASE $db_schema;\""
     dbExistMsg="already exists"
@@ -347,10 +354,10 @@ postgresqlFunc() {
     createSchemaFrmFileCMD="docker exec -it $dockerps psql -U postgres -d $db_schema -f $dockerScriptPath"
     dropDBCMD="docker exec -it $dockerps psql -U postgres -c \"DROP DATABASE $db_schema;\""
 
-    createDB
+    CreateDB
 }
 
-mssqlFunc() {
+MSSqlFunc() {
 
     docker_ps="cs-mssql-2017"
     db_port=1433
@@ -358,7 +365,7 @@ mssqlFunc() {
     dockerReadyLog="SQL Server is now ready"
     docker_run="run -d --name $docker_ps -p $db_port:$db_port  -e ACCEPT_EULA=Y -e SA_PASSWORD=SADMIN123# mcr.microsoft.com/mssql/server:2017-latest"
 
-    dockerStart
+    DockerStart
 
     db_schema=$(echo $isVersion | sed -e 's/-/_/g' | sed -e 's/\.//g')
     echo ""
@@ -373,7 +380,7 @@ mssqlFunc() {
     db_option_param=""
     db_validation_query="SELECT 1"
 
-    applyConfig
+    ApplyConfig
 
     createdbCMD="docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -Q \"CREATE DATABASE $db_schema\""
     dbExistMsg="already exists"
@@ -382,10 +389,10 @@ mssqlFunc() {
     createSchemaFrmFileCMD="docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -d $db_schema -i /opt/mssql.sql"
     dropDBCMD="docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -Q \"DROP DATABASE $db_schema\""
 
-    createDB
+    CreateDB
 }
 
-h2Func() {
+H2Func() {
 
     db_schema=$(echo $isVersion | sed -e 's/-/_/g' | sed -e 's/\.//g')
     echo ""
@@ -400,7 +407,7 @@ h2Func() {
     db_validation_query="SELECT 1"
     db_option_param=""
 
-    applyConfig
+    ApplyConfig
 
     db_status=$(ls $script_dir/$isVersion/repository/database | grep $db_schema | wc -l)
 
@@ -524,19 +531,19 @@ dbType=${db_types_arr[$db_type]}
 
 case ${db_types_arr[$db_type]} in
 'MySQL')
-    mysqlFunc
+    MySqlFunc
     ;;
 'Oracle')
-    oracleFunc
+    OracleFunc
     ;;
 'PostgreSQL')
-    postgresqlFunc
+    PostgreSqlFunc
     ;;
 'MSSQL')
-    mssqlFunc
+    MSSqlFunc
     ;;
 *)
-    h2Func
+    H2Func
     ;;
 
 esac
