@@ -6,6 +6,8 @@
 # Maintain the order of the versions
 is_versions_arr=(wso2is-5.0.0 wso2is-5.1.0 wso2is-5.2.0 wso2is-5.3.0 wso2is-5.4.0 wso2is-5.5.0 wso2is-5.6.0 wso2is-5.7.0 wso2is-5.8.0 wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
 db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
+tomlSupportFrom="wso2is-5.9.0"
+U2SupportFrom="wso2is-5.2.0"
 
 # To support arguments passing to the script. ex : ./startup "--debug 5005"
 startupPrams=$1
@@ -457,22 +459,22 @@ update2_index=2
 isVersionIndex=$(expr ${#is_versions_arr[@]} - 1)
 
 # GET IS version
-printf "\nAvailable WSO2IS Versions\n"
+printf "\nAvailable WSO2 Versions\n"
 for index in "${!is_versions_arr[@]}"; do
     echo "[$index]  ${is_versions_arr[$index]}"
 
-    if [ "${is_versions_arr[$index]}" == "wso2is-5.2.0" ]; then
+    if [ "${is_versions_arr[$index]}" == "$U2SupportFrom" ]; then
         update2_index=$index
     fi
 
-    if [ "${is_versions_arr[$index]}" == "wso2is-5.9.0" ]; then
+    if [ "${is_versions_arr[$index]}" == "$tomlSupportFrom" ]; then
         toml_ver_index=$index
         uniqueDbIdVersion=$(expr ${toml_ver_index} + 1)
     fi
 
 done
 
-read -p 'Enter the index of the WSO2IS Version in above list ['$isVersionIndex']: ' input
+read -p 'Enter the index of the WSO2 Server version in above list ['$isVersionIndex']: ' input
 isVersionIndex=${input:-$isVersionIndex}
 echo "Selected IS version : "${is_versions_arr[$isVersionIndex]}
 isVersion=${is_versions_arr[$isVersionIndex]}
