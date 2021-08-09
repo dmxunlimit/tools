@@ -5,7 +5,7 @@
 # Configurable Attributes
 # Maintain the order of the versions
 db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
-tomlSupportFrom="wso2is-5.9.0"
+tomlSupportArr=(wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
 U2SupportFrom="wso2is-5.2.0"
 
 # To support arguments passing to the script. ex : ./startup "--debug 5005"
@@ -164,13 +164,28 @@ dockerStart() {
 
 applyConfig() {
 
-    if [ $isVersionIndex -lt $toml_ver_index ]; then
+    isTOMLsupported=false
+
+    for index in "${!tomlSupportArr[@]}"; do
+
+        if [ "${tomlSupportArr[$index]}" == "$isVersion" ]; then
+            isTOMLsupported=true
+        fi
+
+    done
+
+    if [ "${is_versions_arr[$index]}" == "$tomlSupportFrom" ]; then
+        toml_ver_index=$index
+        uniqueDbIdVersion=$(expr ${toml_ver_index} + 1)
+    fi
+
+    if [ ! $isTOMLsupported ]; then
         configFile="$script_dir/"$isVersion"/repository/conf/datasources/master-datasources.xml"
         cp -r "$script_dir/artefacts/xml-based/repository/" "$script_dir/"$isVersion"/repository/"
     else
         configFile="$script_dir/"$isVersion"/repository/conf/deployment.toml"
         cp "$script_dir/artefacts/toml-based/repository/conf/deployment.toml" $configFile
-        if [ $isVersionIndex -lt $uniqueDbIdVersion ]; then
+        if [ "$isVersion" == "wso2is-5.9.0" ]; then
             sed -i.bkp 's/'database_unique_id'/'database'/g' $configFile
         fi
     fi
@@ -474,11 +489,6 @@ for index in "${!is_versions_arr[@]}"; do
 
     if [ "${is_versions_arr[$index]}" == "$U2SupportFrom" ]; then
         update2_index=$index
-    fi
-
-    if [ "${is_versions_arr[$index]}" == "$tomlSupportFrom" ]; then
-        toml_ver_index=$index
-        uniqueDbIdVersion=$(expr ${toml_ver_index} + 1)
     fi
 
 done
