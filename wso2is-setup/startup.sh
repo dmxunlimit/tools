@@ -123,7 +123,7 @@ IsDockerReady() {
                 dcLog=$tmp
                 echo $dcLog
             else
-                printf " waitng $sek \r"
+                printf " waiting $sek \r"
                 sek=$(($sek + 1))
             fi
         fi
