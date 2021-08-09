@@ -117,6 +117,7 @@ dockerStart() {
         if [ ! -z $dockerps ]; then
             printf "\nContainer found, Hence starting "
             docker start $dockerps
+            sleep 10
             while true; do
                 sleep 2
                 dbStartupState=$(curl -vs localhost:$db_port 2>&1 | grep Connected)
@@ -162,6 +163,36 @@ applyConfig() {
 
 }
 
+createDB() {
+
+    db_status=$(eval "$createdbCMD")
+
+    if [[ "$db_status" != *"$dbExistMsg"* ]]; then
+        sleep 2
+        for i in $(find $script_dir/$isVersion/dbscripts -name "$dbTypeSqlFile"); do
+            echo "Processing File  "$i
+            docker cp $i $dockerps:$dockerScriptPath
+            tmp=$(eval "$createSchemaFrmFileCMD")
+        done
+    else
+        read -p 'Database already exists, do you wish to create new database ? [no]: ' db_clean
+        db_clean=$(echo "$db_clean" | awk '{print tolower($0)}')
+        if [ "$db_clean" == "yes" ] || [ "$db_clean" == "y" ]; then
+            echo "Dropping exsiting schema :"$db_schema
+            echo $(eval "$dropDBCMD")
+            sleep 2
+            echo $(eval "$createdbCMD")
+            sleep 2
+            for i in $(find $script_dir/$isVersion/dbscripts -name "$dbTypeSqlFile"); do
+                echo "Processing File  "$i
+                docker cp $i $dockerps:$dockerScriptPath
+                tmp=$(eval "$createSchemaFrmFileCMD")
+            done
+        fi
+
+    fi
+}
+
 mysqlFunc() {
 
     docker_ps="cs-mysql-57"
@@ -191,32 +222,14 @@ mysqlFunc() {
         docker exec -it $dockerps /bin/sh -c "mysql --defaults-extra-file=/home/cred.cnf -e "\""SET GLOBAL SQL_MODE='ALLOW_INVALID_DATES';"\"""
     fi
 
-    db_status=$(docker exec -it $dockerps /bin/sh -c "mysql --defaults-extra-file=/home/cred.cnf -e 'create database $db_schema;'")
-    sleep 2
+    createdbCMD="docker exec -it $dockerps /bin/sh -c \"mysql --defaults-extra-file=/home/cred.cnf -e 'create database $db_schema;'\""
+    dbExistMsg="exists"
+    dbTypeSqlFile="mysql.sql"
+    dockerScriptPath="/home/$dbTypeSqlFile"
+    createSchemaFrmFileCMD="docker exec -it $dockerps /bin/sh -c \"mysql --defaults-extra-file=/home/cred.cnf $db_schema < $dockerScriptPath\""
+    dropDBCMD="docker exec -it $dockerps /bin/sh -c \"mysql --defaults-extra-file=/home/cred.cnf -e 'drop database $db_schema;'\""
 
-    if [[ "$db_status" != *"exists"* ]]; then
-        for i in $(find $script_dir/$isVersion/dbscripts -name "mysql.sql"); do
-            echo "Processing File  "$i
-            docker cp $i $dockerps:/home/mysql.sql
-            docker exec -it $dockerps /bin/sh -c "mysql --defaults-extra-file=/home/cred.cnf $db_schema < /home/mysql.sql"
-        done
-    else
-        read -p 'Database already exists, do you wish to create new database ? [no]: ' db_clean
-        db_clean=$(echo "$db_clean" | awk '{print tolower($0)}')
-        if [ "$db_clean" == "yes" ] || [ "$db_clean" == "y" ]; then
-            docker exec -it $dockerps /bin/sh -c "mysql --defaults-extra-file=/home/cred.cnf -e 'drop database $db_schema;'"
-            sleep 2
-            docker exec -it $dockerps /bin/sh -c "mysql --defaults-extra-file=/home/cred.cnf -e 'create database $db_schema;'"
-            sleep 2
-            for i in $(find $script_dir/$isVersion/dbscripts -name "mysql.sql"); do
-                echo "Processing File "$i
-                docker cp $i $dockerps:/home/mysql.sql
-                docker exec -it $dockerps /bin/sh -c "mysql --defaults-extra-file=/home/cred.cnf $db_schema < /home/mysql.sql"
-            done
-        fi
-
-    fi
-
+    createDB
 }
 
 oracleFunc() {
@@ -232,7 +245,7 @@ oracleFunc() {
     db_schema=${input:-$db_schema}
     echo "Using database name :"$db_schema
 
-    db_url="jdbc:oracle:thin:@localhost:1521\/xe"
+    db_url="jdbc:oracle:thin:@localhost:1521\/ORCL"
     db_username="$db_schema"
     db_password="$db_schema"
     db_driver="oracle.jdbc.driver.OracleDriver"
@@ -248,33 +261,14 @@ oracleFunc() {
 
     oracle_schema=$(echo "$db_schema" | awk '{print toupper($0)}')
 
-    db_status=$(docker exec -it --user oracle $dockerps /bin/sh -c "sqlplus -s / as sysdba <<< 'SELECT 1 FROM all_users where username='\''$oracle_schema'\'';'" | grep -i "no rows selected")
+    createdbCMD="docker exec -it --user oracle cs-oracle-12c /bin/sh -c \"echo @/home/oracle/user.sql | sqlplus -s / as sysdba\" | grep \"conflicts\""
+    dbExistMsg="conflicts"
+    dbTypeSqlFile="oracle.sql"
+    dockerScriptPath="/home/oracle/$dbTypeSqlFile"
+    createSchemaFrmFileCMD="docker exec -it -u oracle $dockerps /bin/sh -c \"echo @/home/oracle/oracle.sql | sqlplus -s $db_schema/$db_schema\""
+    dropDBCMD="docker exec -it --user oracle $dockerps /bin/sh -c \"sqlplus -s / as sysdba <<< 'drop user $oracle_schema cascade;'\""
 
-    if [[ "$db_status" == *"no rows selected"* ]]; then
-        echo $(docker exec -it --user oracle $dockerps /bin/sh -c "echo @/home/oracle/user.sql | sqlplus -s / as sysdba")
-        sleep 2
-        for i in $(find $script_dir/$isVersion/dbscripts -name "oracle.sql"); do
-            echo "Processing File  "$i
-            docker cp $i $dockerps:/home/oracle/oracle.sql
-            tmp=$(docker exec -it $dockerps /bin/sh -c "echo @/home/oracle/oracle.sql | sqlplus -s $db_schema/$db_schema")
-        done
-    else
-        read -p 'Database already exists, do you wish to create new database ? [no]: ' db_clean
-        db_clean=$(echo "$db_clean" | awk '{print tolower($0)}')
-        if [ "$db_clean" == "yes" ] || [ "$db_clean" == "y" ]; then
-            echo "Dropping exsiting schema :"$oracle_schema
-            echo $(docker exec -it --user oracle $dockerps /bin/sh -c "sqlplus -s / as sysdba <<< 'drop user $oracle_schema cascade;'")
-            sleep 2
-            echo $(docker exec -it --user oracle $dockerps /bin/sh -c "echo @/home/oracle/user.sql | sqlplus -s / as sysdba")
-            sleep 2
-            for i in $(find $script_dir/$isVersion/dbscripts -name "oracle.sql"); do
-                echo "Processing File  "$i
-                docker cp $i $dockerps:/home/oracle/oracle.sql
-                tmp=$(docker exec -it $dockerps /bin/sh -c "echo @/home/oracle/oracle.sql | sqlplus -s $db_schema/$db_schema")
-            done
-        fi
-
-    fi
+    createDB
 
 }
 
@@ -300,33 +294,14 @@ postgresqlFunc() {
 
     applyConfig
 
-    db_status=$(docker exec -it $dockerps psql -U postgres -c "CREATE DATABASE $db_schema;")
+    createdbCMD="docker exec -it $dockerps psql -U postgres -c \"CREATE DATABASE $db_schema;\""
+    dbExistMsg="already exists"
+    dbTypeSqlFile="postgresql.sql"
+    dockerScriptPath="/var/lib/postgresql/$dbTypeSqlFile"
+    createSchemaFrmFileCMD="docker exec -it $dockerps psql -U postgres -d $db_schema -f $dockerScriptPath"
+    dropDBCMD="docker exec -it $dockerps psql -U postgres -c \"DROP DATABASE $db_schema;\""
 
-    if [[ "$db_status" != *"already exists"* ]]; then
-        sleep 2
-        for i in $(find $script_dir/$isVersion/dbscripts -name "postgresql.sql"); do
-            echo "Processing File  "$i
-            docker cp $i $dockerps:/var/lib/postgresql/postgres.sql
-            tmp=$(docker exec -it $dockerps psql -U postgres -d $db_schema -f /var/lib/postgresql/postgres.sql)
-        done
-    else
-        read -p 'Database already exists, do you wish to create new database ? [no]: ' db_clean
-        db_clean=$(echo "$db_clean" | awk '{print tolower($0)}')
-        if [ "$db_clean" == "yes" ] || [ "$db_clean" == "y" ]; then
-            echo "Dropping exsiting schema :"$db_schema
-            echo $(docker exec -it $dockerps psql -U postgres -c "DROP DATABASE $db_schema;")
-            sleep 2
-            echo $(docker exec -it $dockerps psql -U postgres -c "CREATE DATABASE $db_schema;")
-            sleep 2
-            for i in $(find $script_dir/$isVersion/dbscripts -name "postgresql.sql"); do
-                echo "Processing File  "$i
-                docker cp $i $dockerps:/var/lib/postgresql/postgres.sql
-                tmp=$(docker exec -it $dockerps psql -U postgres -d $db_schema -f /var/lib/postgresql/postgres.sql)
-            done
-        fi
-
-    fi
-
+    createDB
 }
 
 mssqlFunc() {
@@ -351,33 +326,14 @@ mssqlFunc() {
 
     applyConfig
 
-    db_status=$(docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -Q "CREATE DATABASE $db_schema")
+    createdbCMD="docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -Q \"CREATE DATABASE $db_schema\""
+    dbExistMsg="already exists"
+    dbTypeSqlFile="mssql.sql"
+    dockerScriptPath="/opt/$dbTypeSqlFile"
+    createSchemaFrmFileCMD="docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -d $db_schema -i /opt/mssql.sql"
+    dropDBCMD="docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -Q \"DROP DATABASE $db_schema\""
 
-    if [[ "$db_status" != *"already exists"* ]]; then
-        sleep 2
-        for i in $(find $script_dir/$isVersion/dbscripts -name "mssql.sql"); do
-            echo "Processing File  "$i
-            docker cp $i $dockerps:/opt/mssql.sql
-            tmp=$(docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -d $db_schema -i /opt/mssql.sql)
-        done
-    else
-        read -p 'Database already exists, do you wish to create new database ? [no]: ' db_clean
-        db_clean=$(echo "$db_clean" | awk '{print tolower($0)}')
-        if [ "$db_clean" == "yes" ] || [ "$db_clean" == "y" ]; then
-            echo "Dropping exsiting schema :"$db_schema
-            echo $(docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -Q "DROP DATABASE $db_schema")
-            sleep 2
-            echo $(docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -Q "CREATE DATABASE $db_schema")
-            sleep 2
-            for i in $(find $script_dir/$isVersion/dbscripts -name "mssql.sql"); do
-                echo "Processing File  "$i
-                docker cp $i $dockerps:/opt/mssql.sql
-                tmp=$(docker exec -it $dockerps /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P $db_password -d $db_schema -i /opt/mssql.sql)
-            done
-        fi
-
-    fi
-
+    createDB
 }
 
 h2Func() {
