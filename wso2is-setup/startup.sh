@@ -361,7 +361,7 @@ MSSqlFunc() {
 
     docker_ps="cs-mssql-2017"
     db_port=1433
-    dockerReadyTailCount="-n15"
+    dockerReadyTailCount="-n25"
     dockerReadyLog="SQL Server is now ready"
     docker_run="run -d --name $docker_ps -p $db_port:$db_port  -e ACCEPT_EULA=Y -e SA_PASSWORD=SADMIN123# mcr.microsoft.com/mssql/server:2017-latest"
 
