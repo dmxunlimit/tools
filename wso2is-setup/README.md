@@ -1,8 +1,9 @@
 ## Prerequisites
 
-1. WSO2IS pack has to available in the same path as startup script.
+1. Respective WSO2IS pack has to available in the same path as startup script.
 
 ex
+
 ![image](https://user-images.githubusercontent.com/20121821/128663968-22575662-9ef1-49fa-b6cf-5875312c548b.png)
 
 2. Respective Java version should be avaibale ex JDK 1.8
