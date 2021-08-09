@@ -136,8 +136,8 @@ if [ -z "$process" ]; then
   sleep 1
 
   echo -e "\n" >>nohup.out
-  nohup sh $artefactDir/loadtest.sh $CURRENTDIR $1 &
-  printf "\nBackgroud job created ./loadtest.sh !" && tail -n 0 -f nohup.out
+  nohup sh $artefactDir/loadtest.sh $CURRENTDIR $jmxFiles &
+  printf "\nBackgroud job created ./loadtest.sh !" && tail -0f nohup.out
 
 else
   printf "Already running process found for $pname \n"
