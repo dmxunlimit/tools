@@ -114,14 +114,14 @@ IsDockerReady() {
 
         if [[ "$dbStartupState" == *"$dockerReadyLog"* ]]; then
             if [ "$dcLog" != "$dbStartupState" ]; then
-                echo $dbStartupState
+                echo "$dockerps : $dbStartupState"
             fi
             break
         else
             tmp=$(docker logs -n1 $dockerps)
             if [ ! -z "$tmp" ] && [ "$dcLog" != "$tmp" ]; then
                 dcLog=$tmp
-                echo "$dcLog                               "
+                echo "$dockerps : $dcLog                               "
             else
                 printf " One moment please $sek \r"
                 sek=$(($sek + 1))
