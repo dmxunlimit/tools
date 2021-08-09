@@ -191,6 +191,7 @@ createDB() {
             tmp=$(eval "$createSchemaFrmFileCMD")
         done
     else
+        echo ""
         read -p 'Database already exists, do you wish to create new database ? [no]: ' db_clean
         db_clean=$(echo "$db_clean" | awk '{print tolower($0)}')
         if [ "$db_clean" == "yes" ] || [ "$db_clean" == "y" ]; then
@@ -393,6 +394,7 @@ h2Func() {
         #     sleep 1
         # done
     else
+        echo ""
         read -p 'Database already exists, do you wish to create new database ? [no]: ' db_clean
         db_clean=$(echo "$db_clean" | awk '{print tolower($0)}')
         if [ "$db_clean" == "yes" ] || [ "$db_clean" == "y" ]; then
@@ -428,7 +430,7 @@ updateProduct() {
     case $OS in
     'Linux')
         cd $script_dir/$isVersion/bin/
-        ./wso2update_linux $u2lvelarg 
+        ./wso2update_linux $u2lvelarg
         ;;
     'Darwin')
         cd $script_dir/$isVersion/bin/
