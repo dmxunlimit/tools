@@ -4,7 +4,6 @@
 
 # Configurable Attributes
 # Maintain the order of the versions
-is_versions_arr=(wso2is-5.0.0 wso2is-5.1.0 wso2is-5.2.0 wso2is-5.3.0 wso2is-5.4.0 wso2is-5.5.0 wso2is-5.6.0 wso2is-5.7.0 wso2is-5.8.0 wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
 db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
 tomlSupportFrom="wso2is-5.9.0"
 U2SupportFrom="wso2is-5.2.0"
@@ -32,7 +31,6 @@ case $OS in
 esac
 
 ##### Automated script update #####
-
 script_dir="$(
     cd "$(dirname "$0")"
     pwd
@@ -454,6 +452,17 @@ updateProduct() {
 
     cd $script_dir
 }
+
+is_versions_arr=()
+
+for i in $(find $script_dir -mindepth 1 -maxdepth 1 -type d -name "wso2*" -print0 | xargs -0 basename -a | sort -V); do
+    is_versions_arr+=("$i")
+done
+
+if [ !${is_versions_arr[@]} ]; then
+    printf "\nNO WSO2 Server directories available in the path "$script_dir"\n\n"
+    exit
+fi
 
 update2_index=2
 isVersionIndex=$(expr ${#is_versions_arr[@]} - 1)
