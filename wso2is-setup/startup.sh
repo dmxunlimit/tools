@@ -132,8 +132,7 @@ dockerStart() {
                 
             done
         else
-            printf "\nContainer found, Hence starting "
-            printf "Waiting for container to complete startup ..."
+            printf "\nWaiting for container to complete startup ...\n"
             docker $docker_run
             dockerps=$(docker ps -a | grep -i "$docker_ps" | rev | cut -d " " -f1 | rev)
             sleep 5
