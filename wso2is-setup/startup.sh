@@ -103,7 +103,7 @@ fi
 IsDockerReady() {
 
     dcLog=""
-    sleep 5
+    sleep 2
     sek=0
     echo ""
 
@@ -111,19 +111,19 @@ IsDockerReady() {
         sleep 2
 
         dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
-
+        echo -n "$dockerps : "
         if [[ "$dbStartupState" == *"$dockerReadyLog"* ]]; then
             if [ "$dcLog" != "$dbStartupState" ]; then
-                echo "$dockerps : $dbStartupState"
+                echo $dbStartupState
             fi
             break
         else
             tmp=$(docker logs -n1 $dockerps)
             if [ ! -z "$tmp" ] && [ "$dcLog" != "$tmp" ]; then
                 dcLog=$tmp
-                echo "$dockerps : $dcLog                               "
+                echo $dcLog
             else
-                printf " One moment please $sek \r"
+                printf " waitng $sek \r"
                 sek=$(($sek + 1))
             fi
         fi
