@@ -60,15 +60,11 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
   fi
 fi
 
+curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/.artefacts.tar -o $script_dir/.artefacts.tar
 if [ ! -f $script_dir/.artefacts.tar ]; then
-  printf "\nDownloading required artefacts ...\n"
-  curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/.artefacts.tar -o $script_dir/.artefacts.tar
-fi
-
-if [ ! -d $script_dir/.artefacts ]; then
-  mkdir $script_dir/.artefacts
+  mkdir -p $script_dir/.artefacts
   tar -xf $script_dir/.artefacts.tar -C $script_dir/.artefacts
-  cp $script_dir/.artefacts/stop.sh stop.sh
+  cp -f $script_dir/.artefacts/stop.sh stop.sh
 fi
 
 ####
