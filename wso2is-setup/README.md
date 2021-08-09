@@ -1,6 +1,6 @@
 # One click wso2is start up with any database type.
 
-### currently supported database types
+### Supported database types and versions
 <br/> H2
 <br/> MySQL-5.7
 <br/> ORACLE-12C
