@@ -1,4 +1,4 @@
-# One click wso2is startup with any database type.
+# One click WSO2IS startup with any database type.
 
 ### Supported database types and versions
 <br/> H2
