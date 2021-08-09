@@ -117,25 +117,37 @@ dockerStart() {
         if [ ! -z $dockerps ]; then
             printf "\nContainer found, Hence starting "
             docker start $dockerps
-            sleep 10
+            printf "Waiting for container to complete startup ...\n"
+            sleep 5
             while true; do
                 sleep 2
-                dbStartupState=$(curl -vs localhost:$db_port 2>&1 | grep Connected)
-                if [[ "$dbStartupState" == *"Connected"* ]]; then
+                dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
+
+                if [[ "$dbStartupState" == *"$dockerReadyLog"* ]]; then
+                    echo $dbStartupState
                     break
+                else
+                    echo $(docker logs -n1 $dockerps)
                 fi
+                
             done
         else
-            echo "Creating new container"
-            echo "Waiting for container to complete startup ..."
+            printf "\nContainer found, Hence starting "
+            printf "Waiting for container to complete startup ..."
             docker $docker_run
             dockerps=$(docker ps -a | grep -i "$docker_ps" | rev | cut -d " " -f1 | rev)
+            sleep 5
             while true; do
                 sleep 2
-                dbStartupState=$(curl -vs localhost:$db_port 2>&1 | grep Connected)
-                if [[ "$dbStartupState" == *"Connected"* ]]; then
+                dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
+
+                if [[ "$dbStartupState" == *"$dockerReadyLog"* ]]; then
+                    echo $dbStartupState
                     break
+                else
+                    echo $(docker logs -n1 $dockerps)
                 fi
+
             done
         fi
     fi
@@ -197,6 +209,8 @@ mysqlFunc() {
 
     docker_ps="cs-mysql-57"
     db_port=3306
+    dockerReadyTailCount="-n2"
+    dockerReadyLog="ready for connections"
     docker_run="run -d --name $docker_ps -p $db_port:$db_port -e MYSQL_ROOT_PASSWORD=root mysql:5.7.34"
 
     dockerStart
@@ -236,6 +250,8 @@ oracleFunc() {
 
     docker_ps="cs-oracle-12c"
     db_port=1521
+    dockerReadyTailCount="-n2"
+    dockerReadyLog="we are ready to go"
     docker_run="run -d --name $docker_ps --privileged -v $script_dir/artefacts/oradata:/u01/app/oracle -p $db_port:$db_port absolutapps/oracle-12c-ee"
 
     dockerStart
@@ -276,6 +292,8 @@ postgresqlFunc() {
 
     docker_ps="cs-postgre-10"
     db_port=5432
+    dockerReadyTailCount="-n2"
+    dockerReadyLog="ready to accept connections"
     docker_run="run -d --name $docker_ps -p $db_port:$db_port -e POSTGRES_PASSWORD=postgres postgres:10 -c shared_buffers=1024MB -c max_connections=400"
 
     dockerStart
@@ -308,6 +326,8 @@ mssqlFunc() {
 
     docker_ps="cs-mssql-2017"
     db_port=1433
+    dockerReadyTailCount="-n15"
+    dockerReadyLog="SQL Server is now ready"
     docker_run="run -d --name $docker_ps -p $db_port:$db_port  -e ACCEPT_EULA=Y -e SA_PASSWORD=SADMIN123# mcr.microsoft.com/mssql/server:2017-latest"
 
     dockerStart
