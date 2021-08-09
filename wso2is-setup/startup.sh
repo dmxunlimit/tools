@@ -6,7 +6,7 @@
 # Maintain the order of the versions
 db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
 tomlSupportArr=(wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
-U2SupportFrom="wso2is-5.2.0"
+# U2SupportFrom="wso2is-5.2.0"
 
 # To support arguments passing to the script. ex : ./startup "--debug 5005"
 startupPrams=$1
@@ -487,9 +487,9 @@ printf "\nAvailable WSO2 Versions\n"
 for index in "${!is_versions_arr[@]}"; do
     echo "[$index]  ${is_versions_arr[$index]}"
 
-    if [ "${is_versions_arr[$index]}" == "$U2SupportFrom" ]; then
-        update2_index=$index
-    fi
+    # if [ "${is_versions_arr[$index]}" == "$U2SupportFrom" ]; then
+    #     update2_index=$index
+    # fi
 
 done
 
