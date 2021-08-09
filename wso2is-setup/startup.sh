@@ -1,5 +1,17 @@
 #!/bin/bash
 
+###################
+
+# Configurable Attributes
+# Maintain the order of the versions
+is_versions_arr=(wso2is-5.0.0 wso2is-5.1.0 wso2is-5.2.0 wso2is-5.3.0 wso2is-5.4.0 wso2is-5.5.0 wso2is-5.6.0 wso2is-5.7.0 wso2is-5.8.0 wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
+db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
+
+# To support arguments passing to the script. ex : ./startup "--debug 5005"
+startupPrams=$1
+
+###################
+
 # Detect the platform (similar to $OSTYPE)
 OS="$(uname)"
 case $OS in
@@ -14,7 +26,10 @@ esac
 
 ##### Automated script update #####
 
-script_dir="$(cd "$(dirname "$0")"; pwd)";
+script_dir="$(
+    cd "$(dirname "$0")"
+    pwd
+)"
 scriptBaseName="$(basename $0)"
 scriptFile="$script_dir/$scriptBaseName"
 scriptFilelst=$script_dir$scriptBaseName"_latest"
@@ -78,17 +93,7 @@ if [ ! -d $script_dir/artefacts ]; then
     tar -xf $script_dir/.artefacts.tar -C $script_dir/artefacts
 fi
 
-####
-
-is_versions_arr=(wso2is-5.0.0 wso2is-5.1.0 wso2is-5.2.0 wso2is-5.3.0 wso2is-5.4.0 wso2is-5.4.1 wso2is-5.5.0 wso2is-5.6.0 wso2is-5.7.0 wso2is-5.8.0 wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
-db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
-toml_ver_index=10
-update2_index=1
-
-isVersion="wso2is-5.2.0"
-isVersionIndex=$(expr ${#is_versions_arr[@]} - 1)
-dbType="h2"
-startupPrams=""
+################
 
 dockerStart() {
 
@@ -129,7 +134,7 @@ dockerStart() {
                 else
                     echo $(docker logs -n1 $dockerps)
                 fi
-                
+
             done
         else
             printf "\nWaiting for container to complete startup ...\n"
@@ -160,7 +165,7 @@ applyConfig() {
     else
         configFile="$script_dir/"$isVersion"/repository/conf/deployment.toml"
         cp "$script_dir/artefacts/toml-based/repository/conf/deployment.toml" $configFile
-        if [ $isVersionIndex -lt 12 ]; then
+        if [ $isVersionIndex -lt $uniqueDbIdVersion ]; then
             sed -i.bkp 's/'database_unique_id'/'database'/g' $configFile
         fi
     fi
@@ -376,7 +381,7 @@ h2Func() {
     if [[ "$db_status" == *"0"* ]]; then
         # sleep 2
         # java -cp $script_dir/artefacts/db-client/h2*.jar org.h2.tools.RunScript -url "jdbc:h2:$script_dir/"$isVersion"/repository/database/"$db_schema -user wso2carbon -password wso2carbon -script $script_dir/$isVersion/dbscripts/h2.sql
-        startupPrams="-Dsetup"
+        startupPrams="-Dsetup $startupPrams"
         # for i in $(find $script_dir/$isVersion/dbscripts -name "h2.sql"); do
         #     echo "Processing File  "$i
         #     java -cp $script_dir/artefacts/db-client/h2*.jar org.h2.tools.RunScript -url "jdbc:h2:$script_dir/"$isVersion"/repository/database/"$db_schema -user wso2carbon -password wso2carbon -script $i
@@ -390,7 +395,7 @@ h2Func() {
             rm -rf $script_dir/"$isVersion"/repository/database/$db_schema.*
             sleep 2
             # java -cp $script_dir/artefacts/db-client/h2*.jar org.h2.tools.RunScript -url "jdbc:h2:$script_dir/"$isVersion"/repository/database/"$db_schema -user wso2carbon -password wso2carbon -script $script_dir/$isVersion/dbscripts/h2.sql
-            startupPrams="-Dsetup"
+            startupPrams="-Dsetup $startupPrams"
             # for i in $(find $script_dir/$isVersion/dbscripts -name "h2.sql"); do
             #     echo "Processing File  "$i
             #     java -cp $script_dir/artefacts/db-client/h2*.jar org.h2.tools.RunScript -url "jdbc:h2:$script_dir/"$isVersion"/repository/database/"$db_schema -user wso2carbon -password wso2carbon -script $i
@@ -402,11 +407,25 @@ h2Func() {
 
 }
 
+update2_index=2
+isVersionIndex=$(expr ${#is_versions_arr[@]} - 1)
+
 # GET IS version
 printf "\nAvailable WSO2IS Versions\n"
 for index in "${!is_versions_arr[@]}"; do
     echo "[$index]  ${is_versions_arr[$index]}"
+
+    if [ "${is_versions_arr[$index]}" == "wso2is-5.2.0" ]; then
+        update2_index=$index
+    fi
+
+    if [ "${is_versions_arr[$index]}" == "wso2is-5.9.0" ]; then
+        toml_ver_index=$index
+        uniqueDbIdVersion=$(expr ${toml_ver_index} + 1)
+    fi
+
 done
+
 read -p 'Enter the index of the WSO2IS Version in above list ['$isVersionIndex']: ' input
 isVersionIndex=${input:-$isVersionIndex}
 echo "Selected IS version : "${is_versions_arr[$isVersionIndex]}
@@ -420,7 +439,7 @@ fi
 cp -rf "$script_dir/artefacts/drivers/repository/components" "$script_dir/"$isVersion"/repository/"
 # cd "$script_dir/$isVersion"
 
-if [ "$isVersionIndex" -gt "$update2_index" ]; then
+if [ "$isVersionIndex" -ge "$update2_index" ]; then
     read -p 'Do you wish to update the product [no]: ' updateProd
     updateProd=$(echo "$updateProd" | awk '{print tolower($0)}')
     if [ "$updateProd" == "yes" ] || [ "$updateProd" == "y" ]; then
