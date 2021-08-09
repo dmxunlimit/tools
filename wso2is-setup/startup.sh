@@ -220,6 +220,7 @@ mysqlFunc() {
     dockerStart
 
     db_schema=$(echo $isVersion | sed -e 's/-/_/g' | sed -e 's/\.//g')
+    echo ""
     read -p 'Do you wish to change database name ['$db_schema']: ' input
     db_schema=${input:-$db_schema}
     echo "Using database name :"$db_schema
@@ -261,6 +262,7 @@ oracleFunc() {
     dockerStart
 
     db_schema=$(echo $isVersion | sed -e 's/-/_/g' | sed -e 's/\.//g')
+    echo ""
     read -p 'Do you wish to change database name ['$db_schema']: ' input
     db_schema=${input:-$db_schema}
     echo "Using database name :"$db_schema
@@ -303,6 +305,7 @@ postgresqlFunc() {
     dockerStart
 
     db_schema=$(echo $isVersion | sed -e 's/-/_/g' | sed -e 's/\.//g')
+    echo ""
     read -p 'Do you wish to change database name ['$db_schema']: ' input
     db_schema=${input:-$db_schema}
     echo "Using database name :"$db_schema
@@ -337,6 +340,7 @@ mssqlFunc() {
     dockerStart
 
     db_schema=$(echo $isVersion | sed -e 's/-/_/g' | sed -e 's/\.//g')
+    echo ""
     read -p 'Do you wish to change database name ['$db_schema']: ' input
     db_schema=${input:-$db_schema}
     echo "Using database name :"$db_schema
@@ -363,6 +367,7 @@ mssqlFunc() {
 h2Func() {
 
     db_schema=$(echo $isVersion | sed -e 's/-/_/g' | sed -e 's/\.//g')
+    echo ""
     read -p 'Do you wish to change database name ['$db_schema']: ' input
     db_schema=${input:-$db_schema}
     echo "Using database name :"$db_schema
@@ -407,6 +412,40 @@ h2Func() {
 
 }
 
+updateProduct() {
+
+    u2lvelarg=""
+
+    echo "Updating Product with update 2.0\n"
+    read -p 'Enter the update level [latest]: ' updateLevel
+    if [ ! -z $updateLevel ]; then
+        echo "Removing the exising product to update specific U2 level "$updateLevel
+        rm -rf $script_dir/$isVersion
+        unzip $script_dir/$isVersion".zip" -d $script_dir
+        u2lvelarg=" -l "$updateLevel
+    fi
+
+    case $OS in
+    'Linux')
+        cd $script_dir/$isVersion/bin/
+        ./wso2update_linux $u2lvelarg 
+        ;;
+    'Darwin')
+        cd $script_dir/$isVersion/bin/
+        ./wso2update_darwin $u2lvelarg
+        ;;
+    *NT*)
+        $script_dir/$isVersion/bin/wso2update_windows.exe $u2lvelarg
+        ;;
+    *)
+        echo "Unknown OS Type "$OS
+        ;;
+
+    esac
+
+    cd $script_dir
+}
+
 update2_index=2
 isVersionIndex=$(expr ${#is_versions_arr[@]} - 1)
 
@@ -439,18 +478,14 @@ fi
 cp -rf "$script_dir/artefacts/drivers/repository/components" "$script_dir/"$isVersion"/repository/"
 # cd "$script_dir/$isVersion"
 
-if [ "$isVersionIndex" -ge "$update2_index" ]; then
-    read -p 'Do you wish to update the product [no]: ' updateProd
-    updateProd=$(echo "$updateProd" | awk '{print tolower($0)}')
-    if [ "$updateProd" == "yes" ] || [ "$updateProd" == "y" ]; then
-        echo "Updating Product with update 2.0"
-        read -p 'Enter the update level : ' updateLevel
-
-        # if [ ! -z $updateLevel ]; then
-
-        # fi
-    fi
-fi
+# if [ "$isVersionIndex" -ge "$update2_index" ]; then
+#     echo ""
+#     read -p 'Do you wish to update the product [no]: ' updateProd
+#     updateProd=$(echo "$updateProd" | awk '{print tolower($0)}')
+#     if [ "$updateProd" == "yes" ] || [ "$updateProd" == "y" ]; then
+#         updateProduct
+#     fi
+# fi
 
 # GET Database type
 printf "\nAvailable Databases\n"
