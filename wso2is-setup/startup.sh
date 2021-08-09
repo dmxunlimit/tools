@@ -14,7 +14,7 @@ esac
 
 ##### Automated script update #####
 
-script_dir=$(dirname "$0")
+script_dir="$(cd "$(dirname "$0")"; pwd)";
 scriptBaseName="$(basename $0)"
 scriptFile="$script_dir/$scriptBaseName"
 scriptFilelst=$script_dir$scriptBaseName"_latest"
