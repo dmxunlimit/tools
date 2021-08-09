@@ -17,6 +17,11 @@ OS="$(uname)"
 case $OS in
 'Linux')
     git config --global credential.helper cache
+    dockerPemSet=$(docker ps 2>&1 | grep "permission denied")
+    if [[ "$dockerPemSet" == *"permission denied"* ]]; then
+        sudo chmod 666 /var/run/docker.sock
+    fi
+
     ;;
 *NT*)
     git config --system core.longpaths true
