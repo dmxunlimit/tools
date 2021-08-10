@@ -79,6 +79,7 @@ pname=loadtest.sh
 process=$(ps aux | grep -v grep | grep $pname | awk '{print $2}')
 jmxFiles=$1
 
+echo ""
 read -p 'Do you wish to generate new jmx scripts [no]: ' genScripts
 genScripts=$(echo "$genScripts" | awk '{print tolower($0)}')
 if [ "$genScripts" == "yes" ] || [ "$genScripts" == "y" ]; then
