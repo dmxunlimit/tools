@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# tar -cvf .artefacts.tar .artefacts
+# tar -cvf .artefacts.tar .artefacts/*
 # Detect the platform (similar to $OSTYPE)
 OS="$(uname)"
 case $OS in
@@ -13,7 +13,10 @@ esac
 
 ##### Automated script update #####
 
-script_dir=$(dirname "$0")
+script_dir="$(
+    cd "$(dirname "$0")"
+    pwd
+)"
 scriptBaseName="$(basename $0)"
 scriptFile="$script_dir/$scriptBaseName"
 scriptFilelst=$script_dir$scriptBaseName"_latest"
@@ -65,11 +68,12 @@ curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/.artefact
 
 if [ -f $script_dir/.artefacts.tar ]; then
   mkdir -p $script_dir/.artefacts
-  tar -xf $script_dir/.artefacts.tar -C $script_dir/.artefacts
+  tar -xvf $script_dir/.artefacts.tar -C $script_dir
   cp -f $script_dir/.artefacts/stop.sh stop.sh
 fi
 
 ####
+cd $script_dir
 
 CURRENTDIR=$(pwd)
 mkdir -p $CURRENTDIR/.artefacts/
@@ -88,57 +92,60 @@ if [ "$genScripts" == "yes" ] || [ "$genScripts" == "y" ]; then
   jmxFiles=$CURRENTDIR/jmx_scripts
 fi
 
-if [ -z "$process" ]; then
+read -p 'Do you wish to continue running loadtest with the generated JMX files [yes]: ' genScriptsCon
+genScriptsCon=$(echo "$genScriptsCon" | awk '{print tolower($0)}')
+if [ "$genScriptsCon" == "yes" ] || [ "$genScriptsCon" == "y" ]; then
 
-  if [ -z "$jmxFiles" ]; then
-    printf "Provide the directory of the JMX files. \n"
-    echo "Ex:"
-    echo "./loadtest-runner.sh jmxScripts"
-    printf "*This also supports continues multi Directory/File execution based on the order of the Directory/file names\n\n"
-    exit 1
-  fi
+  if [ -z "$process" ]; then
 
-  if [ ! -d "$artefactDir/jmeter" ]; then
-
-    if [ ! -f $artefactDir/*jmeter* ]; then
-      printf "\nDownloading Jmeter ..."
-      wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.4.1.tgz -q --show-progress -P $artefactDir/
-
+    if [ -z "$jmxFiles" ]; then
+      printf "Provide the directory of the JMX files. \n"
+      echo "Ex:"
+      echo "./loadtest-runner.sh jmxScripts"
+      printf "*This also supports continues multi Directory/File execution based on the order of the Directory/file names\n\n"
+      exit 1
     fi
 
-    mkdir -p $artefactDir/temp
-    tar -xf $artefactDir/*jmeter* -C $artefactDir/temp
-    mv $artefactDir/temp/* $artefactDir/jmeter
-  fi
+    if [ ! -d "$artefactDir/jmeter" ]; then
+      if [ ! -f $artefactDir/*jmeter* ]; then
+        printf "\nDownloading Jmeter ..."
+        wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.4.1.tgz -q --show-progress -P $artefactDir/
+      fi
+      mkdir -p $artefactDir/temp
+      tar -xf $artefactDir/*jmeter* -C $artefactDir/temp
+      mv $artefactDir/temp/* $artefactDir/jmeter
+    fi
 
-  if [ ! -n "$JAVA_HOME" ]; then
-    if [ ! -d "$artefactDir/java" ]; then
-      if [ ! -f $artefactDir/*jre* ]; then
-        printf "\nDownloading JAVA ..."
-        wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -q --show-progress -P $artefactDir/
+    if [ ! -n "$JAVA_HOME" ]; then
+      if [ ! -d "$artefactDir/java" ]; then
+        if [ ! -f $artefactDir/*jre* ]; then
+          printf "\nDownloading JAVA ..."
+          wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -q --show-progress -P $artefactDir/
+        fi
+
+        mkdir -p $artefactDir/temp
+        tar -xf $artefactDir/*jre* -C $artefactDir/temp
+        mv $artefactDir/temp/* $artefactDir/java
       fi
 
-      mkdir -p $artefactDir/temp
-      tar -xf $artefactDir/*jre* -C $artefactDir/temp
-      mv $artefactDir/temp/* $artefactDir/java
+      echo -e "\nexport JAVA_HOME='$artefactDir/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc && source ~/.bashrc
+
+      echo "JAVA_HOME Set to : $JAVA_HOME"
+    else
+      echo "Using Existing JAVA_HOME : $JAVA_HOME"
     fi
 
-    echo -e "\nexport JAVA_HOME='$artefactDir/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc && source ~/.bashrc
+    rm -rf $artefactDir/temp
 
-    echo "JAVA_HOME Set to : $JAVA_HOME"
+    sleep 1
+
+    echo -e "\n" >>nohup.out
+    nohup sh $artefactDir/loadtest.sh $CURRENTDIR $jmxFiles &
+    printf "\nBackgroud job created ./loadtest.sh !" && tail -0f nohup.out
+
   else
-    echo "Using Existing JAVA_HOME : $JAVA_HOME"
+    printf "Already running process found for $pname \n"
+    sudo ./stop.sh
   fi
 
-  rm -rf $artefactDir/temp
-
-  sleep 1
-
-  echo -e "\n" >>nohup.out
-  nohup sh $artefactDir/loadtest.sh $CURRENTDIR $jmxFiles &
-  printf "\nBackgroud job created ./loadtest.sh !" && tail -0f nohup.out
-
-else
-  printf "Already running process found for $pname \n"
-  sudo ./stop.sh
 fi
