@@ -132,7 +132,7 @@ if [ -z "$process" ]; then
       mv $artefactDir/temp/* $artefactDir/java
     fi
 
-    echo -e "\nexport JAVA_HOME='$artefactDir/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc && source ~/.bashrc
+    printf "\nexport JAVA_HOME='$artefactDir/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc && source ~/.bashrc
 
     echo "JAVA_HOME Set to : $JAVA_HOME"
   else
