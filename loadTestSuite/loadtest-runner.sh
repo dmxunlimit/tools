@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# tar -cvf .artefacts.tar .artefacts
 # Detect the platform (similar to $OSTYPE)
 OS="$(uname)"
 case $OS in
@@ -62,7 +63,7 @@ fi
 
 curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/.artefacts.tar -o $script_dir/.artefacts.tar
 
-if [ ! -f $script_dir/.artefacts.tar ]; then
+if [ -f $script_dir/.artefacts.tar ]; then
   mkdir -p $script_dir/.artefacts
   tar -xf $script_dir/.artefacts.tar -C $script_dir/.artefacts
   cp -f $script_dir/.artefacts/stop.sh stop.sh
@@ -100,7 +101,7 @@ if [ -z "$process" ]; then
 
     if [ ! -f $artefactDir/*jmeter* ]; then
       printf "\nDownloading Jmeter ..."
-      wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.4.1.tgz -q --show-progress -P $artefactDir/
+      wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.4.1.tgz -q --show-progress -P $artefactDir/
 
     fi
 
