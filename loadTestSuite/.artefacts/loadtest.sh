@@ -1,11 +1,10 @@
 #!/bin/bash
 
-newFiles=1
 sleep 1
-while [ $newFiles == 1 ]; do
+
+while true; do
 
     if [ $(find $2 -name "*.jmx" | wc -l) -gt 0 ]; then
-        newFiles=1
         echo "New JMX scripts are available to Process !"
     else
         echo "No JMX scripts are available to Process !, Hence Shutting down ..."
