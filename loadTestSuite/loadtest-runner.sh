@@ -60,7 +60,7 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
   fi
 fi
 
-curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/.artefacts.tar -o $script_dir/.artefacts.tar
+curl -sfL https://github.com/dmxunlimit/tools/releases/download/releases/artefacts.tar -o $script_dir/.artefacts.tar
 if [ ! -f $script_dir/.artefacts.tar ]; then
   mkdir -p $script_dir/.artefacts
   tar -xf $script_dir/.artefacts.tar -C $script_dir/.artefacts

@@ -18,3 +18,4 @@ loadTestSuite/jmx_scripts/OAuth_Password_Grant_Token_Introspection.jmx
 loadTestSuite/jmx_scripts/OAuth_Password_Grant_Token_Revocation.jmx
 wso2is-setupstartup.sh_latest
 wso2is-setup/test.sh
+loadTestSuite/artefacts.tar
