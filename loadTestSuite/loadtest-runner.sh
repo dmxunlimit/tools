@@ -75,9 +75,7 @@ fi
 ####
 cd $script_dir
 
-CURRENTDIR=$(pwd)
-mkdir -p $CURRENTDIR/.artefacts/
-artefactDir="$CURRENTDIR/.artefacts"
+artefactDir="$script_dir/.artefacts"
 
 pname=loadtest.sh
 process=$(ps aux | grep -v grep | grep $pname | awk '{print $2}')
@@ -89,7 +87,7 @@ genScripts=$(echo "$genScripts" | awk '{print tolower($0)}')
 if [ "$genScripts" == "yes" ] || [ "$genScripts" == "y" ]; then
   printf "\nGenerating jmx script files !\n"
   sh $artefactDir/generate-common-jmx.sh
-  jmxFiles=$CURRENTDIR/jmx_scripts
+  jmxFiles=$script_dir/jmx_scripts
 fi
 
 read -p 'Do you wish to continue running loadtest with the generated JMX files [yes]: ' genScriptsCon
@@ -140,7 +138,7 @@ if [ "$genScriptsCon" == "yes" ] || [ "$genScriptsCon" == "y" ]; then
     sleep 1
 
     echo -e "\n" >>nohup.out
-    nohup sh $artefactDir/loadtest.sh $CURRENTDIR $jmxFiles &
+    nohup sh $artefactDir/loadtest.sh $script_dir $jmxFiles &
     printf "\nBackgroud job created ./loadtest.sh !" && tail -0f nohup.out
 
   else
