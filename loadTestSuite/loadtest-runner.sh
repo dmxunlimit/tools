@@ -80,26 +80,27 @@ pname=loadtest.sh
 process=$(ps aux | grep -v grep | grep $pname | awk '{print $2}')
 jmxFiles=$1
 
-echo ""
-read -p 'Do you wish to generate new jmx scripts [no]: ' genScripts
-genScripts=$(echo "$genScripts" | awk '{print tolower($0)}')
-if [ "$genScripts" == "yes" ] || [ "$genScripts" == "y" ]; then
-  printf "\nGenerating jmx script files !\n"
-  sh $artefactDir/generate-common-jmx.sh
-
+if [ -z "$jmxFiles" ]; then
   echo ""
-  genScriptsCon='yes'
-  read -p 'Do you wish to continue running loadtest with the generated JMX files [yes]: ' input
-  genScriptsCon=${input:-$genScriptsCon}
-  genScriptsCon=$(echo "$genScriptsCon" | awk '{print tolower($0)}')
+  read -p 'Do you wish to generate new jmx scripts [no]: ' genScripts
+  genScripts=$(echo "$genScripts" | awk '{print tolower($0)}')
+  if [ "$genScripts" == "yes" ] || [ "$genScripts" == "y" ]; then
+    printf "\nGenerating jmx script files !\n"
+    sh $artefactDir/generate-common-jmx.sh
 
-  if [ "$genScriptsCon" == "yes" ] || [ "$genScriptsCon" == "y" ]; then
-    jmxFiles=$script_dir/jmx_scripts
-  else
-    exit
+    echo ""
+    genScriptsCon='yes'
+    read -p 'Do you wish to continue running loadtest with the generated JMX files [yes]: ' input
+    genScriptsCon=${input:-$genScriptsCon}
+    genScriptsCon=$(echo "$genScriptsCon" | awk '{print tolower($0)}')
+
+    if [ "$genScriptsCon" == "yes" ] || [ "$genScriptsCon" == "y" ]; then
+      jmxFiles=$script_dir/jmx_scripts
+    else
+      exit
+    fi
   fi
 fi
-
 if [ -z "$process" ]; then
 
   if [ -z "$jmxFiles" ]; then
@@ -132,8 +133,8 @@ if [ -z "$process" ]; then
       mv $artefactDir/temp/* $artefactDir/java
     fi
 
-    printf "\nexport JAVA_HOME='$artefactDir/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc && source ~/.bashrc
-
+    printf "\nexport JAVA_HOME='$artefactDir/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc
+    source ~/.bashrc
     echo "JAVA_HOME Set to : $JAVA_HOME"
   else
     echo "Using Existing JAVA_HOME : $JAVA_HOME"
