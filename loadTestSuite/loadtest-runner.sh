@@ -100,7 +100,7 @@ if [ -z "$process" ]; then
 
     if [ ! -f $artefactDir/*jmeter* ]; then
       printf "\nDownloading Jmeter ..."
-      wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.4.1.tgz -q --show-progress -P $artefactDir/
+      wget https://github.com/dmxunlimit/tools/raw/master/wso2is-setup/.artefacts.tar -q --show-progress -P $artefactDir/
 
     fi
 
