@@ -68,7 +68,7 @@ curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/.artefact
 
 if [ -f $script_dir/.artefacts.tar ]; then
   mkdir -p $script_dir/.artefacts
-  tar -xvf $script_dir/.artefacts.tar -C $script_dir
+  tar -xf $script_dir/.artefacts.tar -C $script_dir
   cp -f $script_dir/.artefacts/stop.sh stop.sh
 fi
 
