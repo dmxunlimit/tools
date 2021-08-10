@@ -73,7 +73,6 @@ if [ -f $script_dir/.artefacts.tar ]; then
 fi
 
 ####
-cd $script_dir
 
 artefactDir="$script_dir/.artefacts"
 
