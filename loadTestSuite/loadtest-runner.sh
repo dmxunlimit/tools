@@ -86,10 +86,11 @@ genScripts=$(echo "$genScripts" | awk '{print tolower($0)}')
 if [ "$genScripts" == "yes" ] || [ "$genScripts" == "y" ]; then
   printf "\nGenerating jmx script files !\n"
   sh $artefactDir/generate-common-jmx.sh
-  jmxFiles=$script_dir/jmx_scripts
   read -p 'Do you wish to continue running loadtest with the generated JMX files [yes]: ' genScriptsCon
   genScriptsCon=$(echo "$genScriptsCon" | awk '{print tolower($0)}')
-  if [ "$genScriptsCon" != "yes" ] || [ "$genScriptsCon" != "y" ]; then
+  if [ "$genScriptsCon" == "yes" ] || [ "$genScriptsCon" == "y" ]; then
+    jmxFiles=$script_dir/jmx_scripts
+  else
     exit
   fi
 fi
