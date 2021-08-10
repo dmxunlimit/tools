@@ -133,8 +133,17 @@ if [ -z "$process" ]; then
       mv $artefactDir/temp/* $artefactDir/java
     fi
 
-    printf "\nexport JAVA_HOME='$artefactDir/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc
-    source ~/.bashrc
+    isJavaAlredySet=$(grep -ir "JAVA_HOME" ~/.bashrc | grep -v "#" -c)
+    if [ "$isJavaAlredySet" == "0" ]; then
+      printf "\nexport JAVA_HOME='$artefactDir/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc
+    fi
+
+    javaSetInPath=$(echo $PATH | grep java -c)
+    if [ "$javaSetInPath" == "0" ]; then
+      export PATH=$PATH:$JAVA_HOME/bin
+    fi
+    export JAVA_HOME=$artefactDir/java
+
     echo "JAVA_HOME Set to : $JAVA_HOME"
   else
     echo "Using Existing JAVA_HOME : $JAVA_HOME"
@@ -146,7 +155,7 @@ if [ -z "$process" ]; then
 
   echo -e "\n" >>nohup.out
   nohup sh $artefactDir/loadtest.sh $script_dir $jmxFiles &
-  printf "\nBackgroud job created ./loadtest.sh !" && tail -0f nohup.out
+  printf "\nBackgroud job created ./loadtest.sh !\n" && tail -0f nohup.out
 
 else
   printf "Already running process found for $pname \n"
