@@ -1,4 +1,5 @@
 #!/bin/bash
+
 newFiles=1
 sleep 1
 while [ $newFiles == 1 ]; do
