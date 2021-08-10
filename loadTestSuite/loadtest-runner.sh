@@ -113,7 +113,7 @@ if [ -z "$process" ]; then
 
   if [ ! -d "$artefactDir/jmeter" ]; then
     if [ ! -f $artefactDir/*jmeter* ]; then
-      printf "\nDownloading Jmeter ..."
+      printf "Downloading Jmeter ...\n"
       wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.4.1.tgz -q --show-progress -P $artefactDir/
     fi
     mkdir -p $artefactDir/temp
@@ -124,7 +124,7 @@ if [ -z "$process" ]; then
   if [ ! -n "$JAVA_HOME" ]; then
     if [ ! -d "$artefactDir/java" ]; then
       if [ ! -f $artefactDir/*jre* ]; then
-        printf "\nDownloading JAVA ..."
+        printf "\nDownloading JAVA ...\n"
         wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -q --show-progress -P $artefactDir/
       fi
 
