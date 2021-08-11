@@ -101,7 +101,7 @@ fi
 
 if [ ! -d $script_dir/artefacts ]; then
     mkdir $script_dir/artefacts
-    tar -xf $script_dir/.artefacts.tar -C $script_dir/artefacts
+    tar -xf $script_dir/.artefacts.tar -C $script_dir
 fi
 
 ################

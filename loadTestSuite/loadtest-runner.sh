@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# tar -cvf .artefacts.tar .artefacts/*
 # Detect the platform (similar to $OSTYPE)
 OS="$(uname)"
 case $OS in

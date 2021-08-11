@@ -12,3 +12,6 @@ loadTestSuite/jmx_scripts/*
 wso2is-setup/test.sh
 loadTestSuite/artefacts.tar
 wso2is-setup/.startup.sh_latest
+wso2is-setup/build.sh
+.gitignore
+loadTestSuite/build.sh
