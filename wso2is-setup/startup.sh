@@ -30,62 +30,68 @@ case $OS in
     ;;
 esac
 
+## Colors
+red=$'\e[1;31m'
+grn=$'\e[1;32m'
+yel=$'\e[1;33m'
+blu=$'\e[1;34m'
+mag=$'\e[1;35m'
+cyn=$'\e[1;36m'
+end=$'\e[0m'
+
 ##### Automated script update #####
+
 script_dir="$(
-    cd "$(dirname "$0")"
-    pwd
+  cd "$(dirname "$0")"
+  pwd
 )"
 scriptBaseName="$(basename $0)"
 scriptFile="$script_dir/$scriptBaseName"
-scriptFilelst=$script_dir$scriptBaseName"_latest"
+scriptFilelst="."$scriptBaseName"_latest"
+scriptFilelst=$script_dir"/"$scriptFilelst
 echo "Checking for latest version of the script $scriptBaseName !"
 
 curl -sf https://raw.githubusercontent.com/dmxunlimit/tools/master/wso2is-setup/$scriptBaseName -o $scriptFilelst
 
 if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
-    case $OS in
-    'Linux')
-        alias ls='ls --color=auto'
-        crr_md5=$(md5sum $scriptFile)
-        remt_md5=$(md5sum $scriptFilelst)
-        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
-        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
-        ;;
-    'Darwin')
-        crr_md5=$(md5 $scriptFile)
-        remt_md5=$(md5 $scriptFilelst)
-        crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
-        remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
-        ;;
-    *NT*)
-        crr_md5=$(md5sum $scriptFile)
-        remt_md5=$(md5sum $scriptFilelst)
-        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
-        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
-        ;;
-    *)
-        crr_md5=$(md5sum $scriptFile)
-        remt_md5=$(md5sum $scriptFilelst)
-        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
-        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
-        ;;
-    esac
 
-    if [ "$crr_md5" != "$remt_md5" ]; then
+  case $OS in
+  'Linux')
+    alias ls='ls --color=auto'
+    crr_md5=$(md5sum $scriptFile)
+    remt_md5=$(md5sum $scriptFilelst)
+    crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+    remt_md5=$(echo $remt_md5 | cut -d " " -f1)
+    ;;
+  'Darwin')
+    crr_md5=$(md5 $scriptFile)
+    remt_md5=$(md5 $scriptFilelst)
+    crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
+    remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
+    ;;
+  *)
+    crr_md5=$(md5sum $scriptFile)
+    remt_md5=$(md5sum $scriptFilelst)
+    crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+    remt_md5=$(echo $remt_md5 | cut -d " " -f1)
+    ;;
+  esac
 
-        read -p 'NEW UPDATE FOUND ! Do you wish to update the script [no]: ' updateScript
-        updateScript=$(echo "$updateScript" | awk '{print tolower($0)}')
-        if [ "$updateScript" == "yes" ] || [ "$updateScript" == "y" ]; then
-            printf "\nUpdating the script file .."
-            mv $scriptFilelst $scriptFile
-            chmod 755 $scriptFile
-            printf "\nPlease run it again !!\n"
-            exit
-        fi
-
-    else
-        rm -rf $scriptFilelst
+  if [ "$crr_md5" != "$remt_md5" ]; then
+  printf "\n${blu}NEW UPDATE FOUND !\n${end}"
+    read -p 'Do you wish to update the script [no]: ' updateScript
+    updateScript=$(echo "$updateScript" | awk '{print tolower($0)}')
+    if [ "$updateScript" == "yes" ] || [ "$updateScript" == "y" ]; then
+      printf "\nUpdating The Script File "
+      mv $scriptFilelst $scriptFile
+      chmod 755 $scriptFile
+      printf "\n\n${red}Please Run The Script Again !!${end}\n\n"
+      exit
     fi
+
+  else
+    rm -rf $scriptFilelst
+  fi
 fi
 
 if [ ! -f $script_dir/.artefacts.tar ]; then

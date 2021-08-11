@@ -11,3 +11,4 @@ loadTestSuite/.loadtest-runner.sh_latest
 loadTestSuite/jmx_scripts/*
 wso2is-setup/test.sh
 loadTestSuite/artefacts.tar
+wso2is-setup/.startup.sh_latest
