@@ -58,7 +58,7 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
   esac
 
   if [ "$crr_md5" != "$remt_md5" ]; then
-  printf "\n${blu}NEW UPDATE FOUND !\n${end}"
+    printf "\n${blu}NEW UPDATE FOUND !\n${end}"
     read -p 'Do you wish to update the script [no]: ' updateScript
     updateScript=$(echo "$updateScript" | awk '{print tolower($0)}')
     if [ "$updateScript" == "yes" ] || [ "$updateScript" == "y" ]; then
@@ -74,17 +74,18 @@ if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
   fi
 fi
 
+####
+
+artefactDir="$script_dir/artefacts"
+
 curl -sfL https://github.com/dmxunlimit/tools/raw/master/loadTestSuite/.artefacts.tar -o $script_dir/.artefacts.tar
 
 if [ -f $script_dir/.artefacts.tar ]; then
-  mkdir -p $script_dir/.artefacts
+  mkdir -p $artefactDir
   tar -xf $script_dir/.artefacts.tar -C $script_dir
-  cp -f $script_dir/.artefacts/stop.sh stop.sh
+  cp -f $artefactDir/stop.sh stop.sh
 fi
 
-####
-
-artefactDir="$script_dir/.artefacts"
 
 pname=loadtest.sh
 process=$(ps aux | grep -v grep | grep $pname | awk '{print $2}')
@@ -96,7 +97,7 @@ if [ -z "$jmxFiles" ]; then
   genScripts=$(echo "$genScripts" | awk '{print tolower($0)}')
   if [ "$genScripts" == "yes" ] || [ "$genScripts" == "y" ]; then
     printf "\nGenerating jmx script files !\n"
-    sh $artefactDir/generate-common-jmx.sh
+    sh $artefactDir/generate-common-jmx.sh $script_dir $artefactDir
 
     echo ""
     genScriptsCon='yes'
@@ -133,31 +134,36 @@ if [ -z "$process" ]; then
   fi
 
   if [ ! -n "$JAVA_HOME" ]; then
-    if [ ! -d "$artefactDir/java" ]; then
-      if [ ! -f $artefactDir/*jre* ]; then
-        printf "\nDownloading JAVA ...\n"
-        wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -q --show-progress -P $artefactDir/
+    if [ $OS == "Linux" ]; then
+      if [ ! -d "$artefactDir/java" ]; then
+        if [ ! -f $artefactDir/*jre* ]; then
+          printf "\nDownloading JAVA ...\n"
+          wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -q --show-progress -P $artefactDir/
+        fi
+
+        mkdir -p $artefactDir/temp
+        tar -xf $artefactDir/*jre* -C $artefactDir/temp
+        mv $artefactDir/temp/* $artefactDir/java
       fi
 
-      mkdir -p $artefactDir/temp
-      tar -xf $artefactDir/*jre* -C $artefactDir/temp
-      mv $artefactDir/temp/* $artefactDir/java
-    fi
+      isJavaAlredySet=$(grep -ir "JAVA_HOME" ~/.bashrc | grep -v "#" -c)
+      if [ "$isJavaAlredySet" == "0" ]; then
+        printf "\nexport JAVA_HOME='$artefactDir/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc
+      fi
 
-    isJavaAlredySet=$(grep -ir "JAVA_HOME" ~/.bashrc | grep -v "#" -c)
-    if [ "$isJavaAlredySet" == "0" ]; then
-      printf "\nexport JAVA_HOME='$artefactDir/java' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc
-    fi
+      javaSetInPath=$(echo $PATH | grep java -c)
+      if [ "$javaSetInPath" == "0" ]; then
+        export PATH=$PATH:$JAVA_HOME/bin
+      fi
+      export JAVA_HOME=$artefactDir/java
 
-    javaSetInPath=$(echo $PATH | grep java -c)
-    if [ "$javaSetInPath" == "0" ]; then
-      export PATH=$PATH:$JAVA_HOME/bin
+      echo "JAVA_HOME Set to : $JAVA_HOME"
+    else
+      printf "\n${red}JAVA_HOME is not available !!${end}\n"
+      exit
     fi
-    export JAVA_HOME=$artefactDir/java
-
-    echo "JAVA_HOME Set to : $JAVA_HOME"
   else
-    echo "Using Existing JAVA_HOME : $JAVA_HOME"
+    printf  "\nUsing Existing JAVA_HOME : $JAVA_HOME \n"
   fi
 
   rm -rf $artefactDir/temp
