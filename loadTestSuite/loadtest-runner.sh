@@ -86,7 +86,6 @@ if [ -f $script_dir/.artefacts.tar ]; then
   cp -f $artefactDir/stop.sh stop.sh
 fi
 
-
 pname=loadtest.sh
 process=$(ps aux | grep -v grep | grep $pname | awk '{print $2}')
 jmxFiles=$1
@@ -124,10 +123,8 @@ if [ -z "$process" ]; then
   fi
 
   if [ ! -d "$artefactDir/jmeter" ]; then
-    if [ ! -f $artefactDir/*jmeter* ]; then
-      printf "Downloading Jmeter ...\n"
-      wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.4.1.tgz -q --show-progress -P $artefactDir/
-    fi
+    printf "Downloading Jmeter ...\n"
+    wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.4.1.tgz -q --show-progress -P $artefactDir/
     mkdir -p $artefactDir/temp
     tar -xf $artefactDir/*jmeter* -C $artefactDir/temp
     mv $artefactDir/temp/* $artefactDir/jmeter
@@ -136,10 +133,9 @@ if [ -z "$process" ]; then
   if [ ! -n "$JAVA_HOME" ]; then
     if [ $OS == "Linux" ]; then
       if [ ! -d "$artefactDir/java" ]; then
-        if [ ! -f $artefactDir/*jre* ]; then
-          printf "\nDownloading JAVA ...\n"
-          wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -q --show-progress -P $artefactDir/
-        fi
+
+        printf "\nDownloading JAVA ...\n"
+        wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jre_x64_linux_hotspot_11.0.10_9.tar.gz -q --show-progress -P $artefactDir/
 
         mkdir -p $artefactDir/temp
         tar -xf $artefactDir/*jre* -C $artefactDir/temp
@@ -163,7 +159,7 @@ if [ -z "$process" ]; then
       exit
     fi
   else
-    printf  "\nUsing Existing JAVA_HOME : $JAVA_HOME \n"
+    printf "\nUsing Existing JAVA_HOME : $JAVA_HOME \n"
   fi
 
   rm -rf $artefactDir/temp
