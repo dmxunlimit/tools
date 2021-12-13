@@ -111,9 +111,9 @@ fi
 IsDockerReady() {
 
     dcLog=""
-    sek=0
+    spin='-\|/'
+    i=0
     echo ""
-
     while true; do
 
         dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
@@ -132,9 +132,9 @@ IsDockerReady() {
                 dcLog=$tmp
                 echo $dcLog
             else
-                printf "Waiting for container startup $sek \r"
-                sek=$(($sek + 1))
-                sleep 1
+                i=$(((i + 1) % 4))
+                printf "Waiting for container to startup ${spin:$i:1} \r"
+                sleep .5
             fi
         fi
 
@@ -503,6 +503,7 @@ isVersion=${is_versions_arr[$isVersionIndex]}
 
 unzipProduct() {
 
+    echo "Extracting $isVersion.zip .."
     if [ $OS == "Linux" ]; then
         unzipRuntime=$(unzip 2>&1 | grep -i "not found")
 
