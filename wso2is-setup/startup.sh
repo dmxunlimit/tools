@@ -6,6 +6,8 @@
 # Maintain the order of the versions
 db_types_arr=(H2 MySQL Oracle PostgreSQL MSSQL)
 tomlSupportArr=(wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
+is_versions_arr=(wso2is-5.2.0 wso2is-5.3.0 wso2is-5.4.0 wso2is-5.4.1 wso2is-5.5.0 wso2is-5.6.0 wso2is-5.7.0 wso2is-5.8.0 wso2is-5.9.0 wso2is-5.10.0 wso2is-5.11.0)
+
 # U2SupportFrom="wso2is-5.2.0"
 
 # To support arguments passing to the script. ex : ./startup "--debug 5005"
@@ -42,8 +44,8 @@ end=$'\e[0m'
 ##### Automated script update #####
 
 script_dir="$(
-  cd "$(dirname "$0")"
-  pwd
+    cd "$(dirname "$0")"
+    pwd
 )"
 scriptBaseName="$(basename $0)"
 scriptFile="$script_dir/$scriptBaseName"
@@ -55,43 +57,43 @@ curl -sf https://raw.githubusercontent.com/dmxunlimit/tools/master/wso2is-setup/
 
 if [ -f "$scriptFilelst" ] && [ -s "$scriptFilelst" ]; then
 
-  case $OS in
-  'Linux')
-    alias ls='ls --color=auto'
-    crr_md5=$(md5sum $scriptFile)
-    remt_md5=$(md5sum $scriptFilelst)
-    crr_md5=$(echo $crr_md5 | cut -d " " -f1)
-    remt_md5=$(echo $remt_md5 | cut -d " " -f1)
-    ;;
-  'Darwin')
-    crr_md5=$(md5 $scriptFile)
-    remt_md5=$(md5 $scriptFilelst)
-    crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
-    remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
-    ;;
-  *)
-    crr_md5=$(md5sum $scriptFile)
-    remt_md5=$(md5sum $scriptFilelst)
-    crr_md5=$(echo $crr_md5 | cut -d " " -f1)
-    remt_md5=$(echo $remt_md5 | cut -d " " -f1)
-    ;;
-  esac
+    case $OS in
+    'Linux')
+        alias ls='ls --color=auto'
+        crr_md5=$(md5sum $scriptFile)
+        remt_md5=$(md5sum $scriptFilelst)
+        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
+        ;;
+    'Darwin')
+        crr_md5=$(md5 $scriptFile)
+        remt_md5=$(md5 $scriptFilelst)
+        crr_md5=$(echo $crr_md5 | cut -d "=" -f2)
+        remt_md5=$(echo $remt_md5 | cut -d "=" -f2)
+        ;;
+    *)
+        crr_md5=$(md5sum $scriptFile)
+        remt_md5=$(md5sum $scriptFilelst)
+        crr_md5=$(echo $crr_md5 | cut -d " " -f1)
+        remt_md5=$(echo $remt_md5 | cut -d " " -f1)
+        ;;
+    esac
 
-  if [ "$crr_md5" != "$remt_md5" ]; then
-  printf "\n${blu}NEW UPDATE FOUND !\n${end}"
-    read -p 'Do you wish to update the script [no]: ' updateScript
-    updateScript=$(echo "$updateScript" | awk '{print tolower($0)}')
-    if [ "$updateScript" == "yes" ] || [ "$updateScript" == "y" ]; then
-      printf "\nUpdating The Script File "
-      mv $scriptFilelst $scriptFile
-      chmod 755 $scriptFile
-      printf "\n\n${red}Please Run The Script Again !!${end}\n\n"
-      exit
+    if [ "$crr_md5" != "$remt_md5" ]; then
+        printf "\n${blu}NEW UPDATE FOUND !\n${end}"
+        read -p 'Do you wish to update the script [no]: ' updateScript
+        updateScript=$(echo "$updateScript" | awk '{print tolower($0)}')
+        if [ "$updateScript" == "yes" ] || [ "$updateScript" == "y" ]; then
+            printf "\nUpdating The Script File "
+            mv $scriptFilelst $scriptFile
+            chmod 755 $scriptFile
+            printf "\n\n${red}Please Run The Script Again !!${end}\n\n"
+            exit
+        fi
+
+    else
+        rm -rf $scriptFilelst
     fi
-
-  else
-    rm -rf $scriptFilelst
-  fi
 fi
 
 if [ ! -f $script_dir/.artefacts.tar ]; then
@@ -194,7 +196,7 @@ ApplyConfig() {
 
     if [ "$isTOMLsupported" = false ]; then
         configFile="$script_dir/"$isVersion"/repository/conf/datasources/master-datasources.xml"
-        cp -r "$script_dir/artefacts/xml-based/repository/" "$script_dir/"$isVersion"/repository/"
+        cp -rf "$script_dir/artefacts/xml-based/repository" "$script_dir/"$isVersion"/"
     else
         configFile="$script_dir/"$isVersion"/repository/conf/deployment.toml"
         cp "$script_dir/artefacts/toml-based/repository/conf/deployment.toml" $configFile
@@ -481,16 +483,16 @@ updateProduct() {
     cd $script_dir
 }
 
-for i in $(find $script_dir -mindepth 1 -maxdepth 1 -type d -name "wso2*" -print0 | xargs -0 basename -a | sort -V); do
-    is_versions_arr+=("$i")
-done
+# for i in $(find $script_dir -mindepth 1 -maxdepth 1 -type d -name "wso2*" -print0 | xargs -0 basename -a | sort -V); do
+#     is_versions_arr+=("$i")
+# done
 
-if [ ${#is_versions_arr[@]} -eq 0 ]; then
-    printf "\nNO WSO2 Server directories available in the path "$script_dir"\n\n"
-    exit
-fi
+# if [ ${#is_versions_arr[@]} -eq 0 ]; then
+#     printf "\nNO WSO2 Server directories available in the path "$script_dir"\n\n"
+#     exit
+# fi
 
-update2_index=2
+# update2_index=2
 isVersionIndex=$(expr ${#is_versions_arr[@]} - 1)
 
 # GET IS version
@@ -510,8 +512,33 @@ echo "Selected IS version : "${is_versions_arr[$isVersionIndex]}
 isVersion=${is_versions_arr[$isVersionIndex]}
 
 if [ ! -d "$script_dir/$isVersion" ]; then
-    echo "$isVersion not exists in the location of $script_dir/$isVersion"
-    exit
+    if [ -f "$script_dir/$isVersion.zip" ]; then
+
+        unzip -q "$script_dir/$isVersion.zip" -d $script_dir
+
+        if [ ! -d "$script_dir/$isVersion" ]; then
+            echo ""
+            echo "Invalid $isVersion.zip file, Hence removing !"
+            rm -rf "$script_dir/$isVersion.zip"
+            exit
+        fi
+
+    else
+        echo ""
+        read -p 'Selected product version not availabe in local directory, Do you wish to download [yes]: ' download_prod
+        download_prod=$(echo "$download_prod" | awk '{print tolower($0)}')
+        if [ "$download_prod" == "yes" ] || [ "$download_prod" == "y" ] || [ "$download_prod" == "" ]; then
+        isVersionId=$(echo $isVersion | cut -d "-" -f2)
+            curl --progress-bar -L "https://product-dist.wso2.com/products/identity-server/$isVersionId/$isVersion.zip" \
+                -H 'authority: product-dist.wso2.com' \
+                -H 'referer: https://wso2.com/' \
+                -o $isVersion.zip
+            unzip -q "$script_dir/$isVersion.zip" -d $script_dir
+        else
+            exit
+        fi
+
+    fi
 fi
 
 cp -rf "$script_dir/artefacts/drivers/repository/components" "$script_dir/"$isVersion"/repository/"
