@@ -15,7 +15,8 @@ ex
 
 ![image](https://user-images.githubusercontent.com/20121821/128663968-22575662-9ef1-49fa-b6cf-5875312c548b.png)
 
-2. Docker runtime should be installed in the system,
+2. [MACOS] >> Java runtime should be available in the system.
+3. [MACOS] >> Docker runtime should be available in the system.
 
 
 ### How to run
