@@ -120,17 +120,17 @@ IsDockerReady() {
         dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
         if [[ "$dbStartupState" == *"$dockerReadyLog"* ]]; then
             if [ "$dcLog" != "$dbStartupState" ]; then
-                echo "$dbStartupState                      "
+                echo "$dbStartupState"
             fi
             echo "Please wait few more seconds !"
             sleep 15
             break
         else
             # tmp=$(echo docker logs -n1 $dockerps)
-            tmp=$(docker logs $dockerps 2>/dev/null | tail -2)
+            tmp=$(docker logs $dockerps 2>&1 | tail -1)
             if [ ! -z "$tmp" ] && [ "$dcLog" != "$tmp" ]; then
                 dcLog=$tmp
-                echo "$dcLog                                                   "
+                echo "$dcLog"
             else
                 i=$(((i + 1) % 4))
                 printf "Waiting for container to startup ${spin:$i:1} \r"
