@@ -466,7 +466,10 @@ enableU2() {
     if [ ! -f "$script_dir/$isVersion/updates/product.txt" ]; then
         mkdir -p "$script_dir/$isVersion/updates/"
         echo $isVersion >"$script_dir/$isVersion/updates/product.txt"
-        cp -rf "$script_dir/artefacts/u2/*" "$script_dir/"$isVersion"/"
+
+    fi
+    if [ ! -f "$script_dir/$isVersion/bin/wso2update_linux" ]; then
+        cp -rf "$script_dir/artefacts/u2/bin" "$script_dir/$isVersion/"
     fi
 }
 
