@@ -132,9 +132,9 @@ IsDockerReady() {
                 dcLog=$tmp
                 echo $dcLog
             else
-                sleep 1
                 printf "Waiting for container startup $sek \r"
                 sek=$(($sek + 1))
+                sleep 1
             fi
         fi
 
