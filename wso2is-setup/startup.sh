@@ -512,6 +512,24 @@ isVersionIndex=${input:-$isVersionIndex}
 echo "Selected IS version : "${is_versions_arr[$isVersionIndex]}
 isVersion=${is_versions_arr[$isVersionIndex]}
 
+downloadProduct() {
+
+    echo ""
+    read -p 'Selected product version not availabe in local directory, Do you wish to download [yes]: ' download_prod
+    download_prod=$(echo "$download_prod" | awk '{print tolower($0)}')
+    if [ "$download_prod" == "yes" ] || [ "$download_prod" == "y" ] || [ "$download_prod" == "" ]; then
+        isVersionId=$(echo $isVersion | cut -d "-" -f2)
+        curl --progress-bar -L "https://product-dist.wso2.com/products/identity-server/$isVersionId/$isVersion.zip" \
+            -H 'authority: product-dist.wso2.com' \
+            -H 'referer: https://wso2.com/' \
+            -o $isVersion.zip
+        unzip -q "$script_dir/$isVersion.zip" -d $script_dir
+    else
+        exit
+    fi
+
+}
+
 if [ ! -d "$script_dir/$isVersion" ]; then
     if [ -f "$script_dir/$isVersion.zip" ]; then
 
@@ -521,23 +539,11 @@ if [ ! -d "$script_dir/$isVersion" ]; then
             echo ""
             echo "Invalid $isVersion.zip file, Hence removing !"
             rm -rf "$script_dir/$isVersion.zip"
-            exit
+            downloadProduct
         fi
 
     else
-        echo ""
-        read -p 'Selected product version not availabe in local directory, Do you wish to download [yes]: ' download_prod
-        download_prod=$(echo "$download_prod" | awk '{print tolower($0)}')
-        if [ "$download_prod" == "yes" ] || [ "$download_prod" == "y" ] || [ "$download_prod" == "" ]; then
-        isVersionId=$(echo $isVersion | cut -d "-" -f2)
-            curl --progress-bar -L "https://product-dist.wso2.com/products/identity-server/$isVersionId/$isVersion.zip" \
-                -H 'authority: product-dist.wso2.com' \
-                -H 'referer: https://wso2.com/' \
-                -o $isVersion.zip
-            unzip -q "$script_dir/$isVersion.zip" -d $script_dir
-        else
-            exit
-        fi
+        downloadProduct
 
     fi
 fi
@@ -583,40 +589,40 @@ case ${db_types_arr[$db_type]} in
 esac
 
 # Check JAVA HOME
-  if [ ! -n "$JAVA_HOME" ]; then
+if [ ! -n "$JAVA_HOME" ]; then
     if [ $OS == "Linux" ]; then
-      if [ ! -d "$script_dir/artefacts/jdk" ]; then
+        if [ ! -d "$script_dir/artefacts/jdk" ]; then
 
-        printf "\nJAVA_HOME not found, Hence downloading JAVA ...\n"
-        rm -rf $script_dir/artefacts/*jdk*
+            printf "\nJAVA_HOME not found, Hence downloading JAVA ...\n"
+            rm -rf $script_dir/artefacts/*jdk*
 
-        wget https://files-cdn.liferay.com/mirrors/download.oracle.com/otn-pub/java/jdk/8u221-b11/jdk-8u221-linux-x64.tar.gz -P $script_dir/artefacts/
-        
-        mkdir -p $script_dir/artefacts/temp
-        tar -xf $script_dir/artefacts/*jdk* -C $script_dir/artefacts/temp
-        mv $script_dir/artefacts/temp/* $script_dir/artefacts/jdk
-      fi
+            wget https://files-cdn.liferay.com/mirrors/download.oracle.com/otn-pub/java/jdk/8u221-b11/jdk-8u221-linux-x64.tar.gz -P $script_dir/artefacts/
 
-      isJavaAlredySet=$(grep -ir "JAVA_HOME" ~/.bashrc | grep -v "#" -c)
-      if [ "$isJavaAlredySet" == "0" ]; then
-        printf "\nexport JAVA_HOME='$script_dir/artefacts/jdk' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc
-      fi
+            mkdir -p $script_dir/artefacts/temp
+            tar -xf $script_dir/artefacts/*jdk* -C $script_dir/artefacts/temp
+            mv $script_dir/artefacts/temp/* $script_dir/artefacts/jdk
+        fi
 
-      javaSetInPath=$(echo $PATH | grep java -c)
-      if [ "$javaSetInPath" == "0" ]; then
-        export PATH=$PATH:$JAVA_HOME/bin
-      fi
-      source ~/.bashrc
-      export JAVA_HOME=$script_dir/artefacts/jdk
+        isJavaAlredySet=$(grep -ir "JAVA_HOME" ~/.bashrc | grep -v "#" -c)
+        if [ "$isJavaAlredySet" == "0" ]; then
+            printf "\nexport JAVA_HOME='$script_dir/artefacts/jdk' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc
+        fi
 
-      echo "JAVA_HOME Set to : $JAVA_HOME"
+        javaSetInPath=$(echo $PATH | grep java -c)
+        if [ "$javaSetInPath" == "0" ]; then
+            export PATH=$PATH:$JAVA_HOME/bin
+        fi
+        source ~/.bashrc
+        export JAVA_HOME=$script_dir/artefacts/jdk
+
+        echo "JAVA_HOME Set to : $JAVA_HOME"
     else
-      printf "\n${red}JAVA_HOME is not available !!${end}\n"
-      exit
+        printf "\n${red}JAVA_HOME is not available !!${end}\n"
+        exit
     fi
-  else
+else
     printf "\nUsing Existing JAVA_HOME : $JAVA_HOME \n"
-  fi
+fi
 
 printf "\n#### Starting up "$isVersion" with database "$dbType" ####\n\n"
 
