@@ -122,12 +122,8 @@ IsDockerReady() {
             if [ "$dcLog" != "$dbStartupState" ]; then
                 echo $dbStartupState
             fi
-<<<<<<< HEAD
             echo "Please wait few more seconds !"
             sleep 15
-=======
-            sleep 5
->>>>>>> 9dd8960c9f48612c6ca06ab9591b10532b252526
             break
         else
             # tmp=$(echo docker logs -n1 $dockerps)
@@ -136,6 +132,7 @@ IsDockerReady() {
                 dcLog=$tmp
                 echo $dcLog
             else
+                sleep 1
                 printf "Waiting for container startup $sek \r"
                 sek=$(($sek + 1))
             fi
@@ -150,8 +147,8 @@ DockerStart() {
         dockerRuntime=$(docker -v 2>&1 | grep -i "not found")
 
         if [ ! -z "$dockerRuntime" ]; then
-        echo "Docker is not installed, Hence installing docker"
-        echo ""
+            echo "Docker is not installed, Hence installing docker"
+            echo ""
             sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get -y install apt-transport-https ca-certificates curl gnupg lsb-release && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null && sudo apt-get update && sudo apt-get -y install docker-ce docker-ce-cli containerd.io && sudo chmod 666 /var/run/docker.sock
         fi
     fi
@@ -526,20 +523,19 @@ isVersionIndex=${input:-$isVersionIndex}
 echo "Selected IS version : "${is_versions_arr[$isVersionIndex]}
 isVersion=${is_versions_arr[$isVersionIndex]}
 
+unzipProduct() {
 
-unzipProduct(){
-    
-        if [ $OS == "Linux" ]; then
+    if [ $OS == "Linux" ]; then
         unzipRuntime=$(unzip 2>&1 | grep -i "not found")
 
         if [ ! -z "$unzipRuntime" ]; then
-        echo "unzip tool is not installed, Hence installing unzip"
-        echo ""
+            echo "unzip tool is not installed, Hence installing unzip"
+            echo ""
             sudo apt-get -y install unzip
         fi
     fi
 
-     unzip -q "$script_dir/$isVersion.zip" -d $script_dir
+    unzip -q "$script_dir/$isVersion.zip" -d $script_dir
 }
 
 downloadProduct() {
@@ -553,14 +549,12 @@ downloadProduct() {
             -H 'authority: product-dist.wso2.com' \
             -H 'referer: https://wso2.com/' \
             -o $isVersion.zip
-       unzipProduct
+        unzipProduct
     else
         exit
     fi
 
 }
-
-
 
 if [ ! -d "$script_dir/$isVersion" ]; then
     if [ -f "$script_dir/$isVersion.zip" ]; then
