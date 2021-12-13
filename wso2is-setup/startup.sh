@@ -122,8 +122,12 @@ IsDockerReady() {
             if [ "$dcLog" != "$dbStartupState" ]; then
                 echo $dbStartupState
             fi
+<<<<<<< HEAD
             echo "Please wait few more seconds !"
             sleep 15
+=======
+            sleep 5
+>>>>>>> 9dd8960c9f48612c6ca06ab9591b10532b252526
             break
         else
             # tmp=$(echo docker logs -n1 $dockerps)
