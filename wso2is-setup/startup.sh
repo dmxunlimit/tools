@@ -581,6 +581,41 @@ case ${db_types_arr[$db_type]} in
 
 esac
 
+  if [ ! -n "$JAVA_HOME" ]; then
+    if [ $OS == "Linux" ]; then
+      if [ ! -d "$script_dir/artefacts/jdk" ]; then
+
+        printf "\nDownloading JAVA ...\n"
+        rm -rf $script_dir/artefacts/*jdk*
+
+        wget https://files-cdn.liferay.com/mirrors/download.oracle.com/otn-pub/java/jdk/8u221-b11/jdk-8u221-linux-x64.tar.gz -P $script_dir/artefacts/
+        
+        mkdir -p $script_dir/artefacts/temp
+        tar -xf $script_dir/artefacts/*jdk* -C $script_dir/artefacts/temp
+        mv $script_dir/artefacts/temp/* $script_dir/artefacts/jdk
+      fi
+
+      isJavaAlredySet=$(grep -ir "JAVA_HOME" ~/.bashrc | grep -v "#" -c)
+      if [ "$isJavaAlredySet" == "0" ]; then
+        printf "\nexport JAVA_HOME='$script_dir/artefacts/jdk' \nexport PATH=\$PATH:\$JAVA_HOME/bin" >>~/.bashrc
+      fi
+
+      javaSetInPath=$(echo $PATH | grep java -c)
+      if [ "$javaSetInPath" == "0" ]; then
+        export PATH=$PATH:$JAVA_HOME/bin
+      fi
+      source ~/.bashrc
+      export JAVA_HOME=$script_dir/artefacts/jdk
+
+      echo "JAVA_HOME Set to : $JAVA_HOME"
+    else
+      printf "\n${red}JAVA_HOME is not available !!${end}\n"
+      exit
+    fi
+  else
+    printf "\nUsing Existing JAVA_HOME : $JAVA_HOME \n"
+  fi
+
 printf "\n#### Starting up "$isVersion" with database "$dbType" ####\n\n"
 
 sh $script_dir/$isVersion/bin/wso2server.sh $startupPrams
