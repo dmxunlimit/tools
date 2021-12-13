@@ -9,14 +9,13 @@
 
 ### Prerequisites
 
-1. Respective WSO2IS pack has to be available in the same path as startup script.
+1. Respective WSO2IS pack has to be available in the same path as startup script. if not download option will be prompt.
 
 ex
 
 ![image](https://user-images.githubusercontent.com/20121821/128663968-22575662-9ef1-49fa-b6cf-5875312c548b.png)
 
-2. Respective Java version should be avaibale in the system ex JDK 1.8
-3. Docker runtime should be installed in the system,
+2. Docker runtime should be installed in the system,
 
 
 ### How to run
