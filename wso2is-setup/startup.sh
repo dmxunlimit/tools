@@ -111,12 +111,10 @@ fi
 IsDockerReady() {
 
     dcLog=""
-    sleep 2
     sek=0
     echo ""
 
     while true; do
-        sleep 2
 
         dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
         echo -n "$dockerps : "
@@ -124,6 +122,8 @@ IsDockerReady() {
             if [ "$dcLog" != "$dbStartupState" ]; then
                 echo $dbStartupState
             fi
+            echo "Please wait few more seconds !"
+            sleep 15
             break
         else
             # tmp=$(echo docker logs -n1 $dockerps)
