@@ -461,38 +461,12 @@ H2Func() {
 
 }
 
-updateProduct() {
+enableU2() {
 
-    u2lvelarg=""
-
-    echo "Updating Product with update 2.0\n"
-    read -p 'Enter the update level [latest]: ' updateLevel
-    if [ ! -z $updateLevel ]; then
-        echo "Removing the exising product to update specific U2 level "$updateLevel
-        rm -rf $script_dir/$isVersion
-        unzip $script_dir/$isVersion".zip" -d $script_dir
-        u2lvelarg=" -l "$updateLevel
+    if [ ! -f "$script_dir/$isVersion/updates/product.txt" ]; then
+        echo $isVersion >"$script_dir/$isVersion/updates/product.txt"
+        cp -rf "$script_dir/artefacts/u2/*" "$script_dir/"$isVersion"/"
     fi
-
-    case $OS in
-    'Linux')
-        cd $script_dir/$isVersion/bin/
-        ./wso2update_linux $u2lvelarg
-        ;;
-    'Darwin')
-        cd $script_dir/$isVersion/bin/
-        ./wso2update_darwin $u2lvelarg
-        ;;
-    *NT*)
-        $script_dir/$isVersion/bin/wso2update_windows.exe $u2lvelarg
-        ;;
-    *)
-        echo "Unknown OS Type "$OS
-        ;;
-
-    esac
-
-    cd $script_dir
 }
 
 # for i in $(find $script_dir -mindepth 1 -maxdepth 1 -type d -name "wso2*" -print0 | xargs -0 basename -a | sort -V); do
@@ -574,6 +548,7 @@ if [ ! -d "$script_dir/$isVersion" ]; then
     fi
 fi
 
+enableU2
 cp -rf "$script_dir/artefacts/drivers/repository/components" "$script_dir/"$isVersion"/repository/"
 # cd "$script_dir/$isVersion"
 
