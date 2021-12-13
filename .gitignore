@@ -15,3 +15,6 @@ wso2is-setup/.startup.sh_latest
 wso2is-setup/build.sh
 .gitignore
 loadTestSuite/build.sh
+._.DS_Store
+._*
+.*
