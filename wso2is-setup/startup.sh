@@ -116,8 +116,8 @@ IsDockerReady() {
     echo ""
     while true; do
 
-        dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
         echo -n "$dockerps : "
+        dbStartupState=$(docker logs $dockerReadyTailCount $dockerps 2>&1 | grep "$dockerReadyLog")
         if [[ "$dbStartupState" == *"$dockerReadyLog"* ]]; then
             if [ "$dcLog" != "$dbStartupState" ]; then
                 echo $dbStartupState
