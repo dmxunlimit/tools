@@ -126,12 +126,13 @@ IsDockerReady() {
             fi
             break
         else
-            tmp=$(docker logs -n1 $dockerps)
+            # tmp=$(echo docker logs -n1 $dockerps)
+            tmp=$(docker logs $dockerps 2>/dev/null | tail -2)
             if [ ! -z "$tmp" ] && [ "$dcLog" != "$tmp" ]; then
                 dcLog=$tmp
                 echo $dcLog
             else
-                printf " waiting $sek \r"
+                printf "Waiting for container startup $sek \r"
                 sek=$(($sek + 1))
             fi
         fi
@@ -581,11 +582,12 @@ case ${db_types_arr[$db_type]} in
 
 esac
 
+# Check JAVA HOME
   if [ ! -n "$JAVA_HOME" ]; then
     if [ $OS == "Linux" ]; then
       if [ ! -d "$script_dir/artefacts/jdk" ]; then
 
-        printf "\nDownloading JAVA ...\n"
+        printf "\nJAVA_HOME not found, Hence downloading JAVA ...\n"
         rm -rf $script_dir/artefacts/*jdk*
 
         wget https://files-cdn.liferay.com/mirrors/download.oracle.com/otn-pub/java/jdk/8u221-b11/jdk-8u221-linux-x64.tar.gz -P $script_dir/artefacts/
