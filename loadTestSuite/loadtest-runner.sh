@@ -125,7 +125,7 @@ if [ -z "$process" ]; then
   if [ ! -d "$artefactDir/jmeter" ]; then
     printf "Downloading Jmeter ...\n"
     rm -rf $artefactDir/*jmeter*
-    wget https://downloads.apache.org/jmeter/binaries/apache-jmeter-5.4.1.tgz -q --show-progress -P $artefactDir/
+    wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-5.4.3.tgz -q --show-progress -P $artefactDir/
     mkdir -p $artefactDir/temp
     tar -xf $artefactDir/*jmeter* -C $artefactDir/temp
     mv $artefactDir/temp/* $artefactDir/jmeter
