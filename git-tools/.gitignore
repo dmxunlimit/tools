@@ -6,10 +6,11 @@
 !git-checkout.sh
 !git-clone-all.sh
 !git-clone-product-is.sh
-!test.sh
+test.sh
 
 !artefacts
 !invalid-repos
 !product-is-versions
 repo-versions
 !repo-mapping
+version-extract
